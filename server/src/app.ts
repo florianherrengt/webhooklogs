@@ -1,9 +1,14 @@
 import * as express from "express";
-import fetch from "node-fetch";
+import * as passport from "passport";
 import * as bodyParser from "body-parser";
 import { proxyRequest } from "./proxyRequest";
 import { sdk } from "./helpers";
+import "./passport";
+import { passportRouter } from "./passport/router";
+
 const app = express();
+
+app.use("/auth", passportRouter);
 
 app.use("/webhook/:appId", bodyParser.json(), async (request, response) => {
     const {
