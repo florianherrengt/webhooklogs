@@ -23,7 +23,7 @@ describe("App", () => {
         });
     });
     test("proxy request", async () => {
-        const response = await fetch("http://localhost:3000/webhook/abc/123", {
+        const response = await fetch("http://localhost:3000/webhook/123", {
             headers: {
                 "Content-Type": "application/json",
                 "some-customer-header": "test",

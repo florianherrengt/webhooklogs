@@ -1,22 +1,29 @@
 import * as express from "express";
 import fetch from "node-fetch";
+import { Targets } from "./helpers";
 
 interface ProxyRequestParams {
     request: express.Request;
-    targetUrl: string;
     method: string;
+    target: Pick<Targets, "id" | "url">;
 }
 
 export const proxyRequest = async ({
     request,
-    targetUrl,
+    target,
     method,
 }: ProxyRequestParams) => {
-    const response = await fetch(targetUrl, {
+    const date = new Date();
+    const response = await fetch(target.url, {
         headers: request.headers as { [key: string]: string },
         method,
         body: JSON.stringify(request.body),
     });
     const data = await response.json();
-    return { status: response.status, data };
+    return {
+        status: response.status,
+        data,
+        responseTime: date.valueOf() - new Date().valueOf(),
+        target,
+    };
 };

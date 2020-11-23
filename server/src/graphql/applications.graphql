@@ -1,0 +1,9 @@
+query getApplicationById($id: uuid!) {
+    applications_by_pk(id: $id) {
+        id
+        targets {
+            id
+            url
+        }
+    }
+}

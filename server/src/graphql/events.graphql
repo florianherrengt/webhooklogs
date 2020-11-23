@@ -1,0 +1,5 @@
+mutation insertEvent($object: events_insert_input!) {
+    insert_events_one(object: $object) {
+        id
+    }
+}
