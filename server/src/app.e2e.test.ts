@@ -1,7 +1,7 @@
 import * as http from "http";
 import { createApp } from "./app";
 import { testApp } from "./testApp/testApp";
-import { Application, HookEvent, TargetResponse } from "./models";
+import { Application, HookEvent, TargetResponse, User } from "./models";
 import faker from "faker";
 import express from "express";
 import axios from "axios";
@@ -32,9 +32,13 @@ describe("App", () => {
         });
     });
     test("proxy request", async () => {
+        const user = await User.create({
+            email: faker.internet.email(),
+        });
         const application = await Application.create({
             name: faker.hacker.noun(),
             targetUrl: testAppUrl,
+            userId: user.id,
         });
         const requestId = faker.random.uuid();
         const response = await axios.post(

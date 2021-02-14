@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from ".";
+import { sequelize } from "./sequelize";
 import { ObjectType, Field } from "type-graphql";
 import { v4 as uuid } from "uuid";
 
@@ -8,6 +8,7 @@ export interface HookEventAttributes {
     method: string;
     headers: object;
     body?: object;
+    applicationId: string;
 }
 
 export interface ProjectCreationAttributes
@@ -27,6 +28,8 @@ export class HookEvent
     headers: object;
     @Field((type) => String)
     body: object;
+    @Field((type) => String)
+    applicationId: string;
 }
 
 HookEvent.init(
@@ -48,9 +51,14 @@ HookEvent.init(
             type: DataTypes.JSONB,
             allowNull: true,
         },
+        applicationId: {
+            type: DataTypes.UUIDV4,
+            allowNull: false,
+        },
     },
     {
         tableName: "hook_events",
+        underscored: true,
         sequelize,
     },
 );

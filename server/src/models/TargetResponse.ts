@@ -1,11 +1,11 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { HookEvent, sequelize } from "./";
+import { sequelize } from "./sequelize";
 import { ObjectType, Field } from "type-graphql";
 import { v4 as uuid } from "uuid";
 
 export interface TargetResponseAttributes {
     id: string;
-    data: string;
+    data: object;
     status: number;
     headers: object;
     hookEventId: string;
@@ -20,8 +20,8 @@ export class TargetResponse
     implements TargetResponseAttributes {
     @Field()
     id: string;
-    @Field()
-    data: string;
+    @Field(() => String)
+    data: object;
     @Field()
     status: number;
     @Field(() => String)
@@ -50,13 +50,13 @@ TargetResponse.init(
             allowNull: false,
         },
         hookEventId: {
-            type: DataTypes.STRING,
+            type: DataTypes.UUIDV4,
             allowNull: false,
-            key: "hook_event_id",
         },
     },
     {
         tableName: "target_responses",
+        underscored: true,
         sequelize,
     },
 );

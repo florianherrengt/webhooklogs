@@ -1,5 +1,5 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from "./";
+import { sequelize } from "./sequelize";
 import { ObjectType, Field } from "type-graphql";
 import { v4 as uuid } from "uuid";
 
@@ -7,6 +7,7 @@ export interface ApplicationAttributes {
     id: string;
     name: string;
     targetUrl: string;
+    userId: string;
 }
 
 export interface ApplicationCreationAttributes
@@ -24,6 +25,8 @@ export class Application
     name: string;
     @Field((type) => String)
     targetUrl: string;
+    @Field((type) => String)
+    userId: string;
 }
 
 Application.init(
@@ -41,9 +44,14 @@ Application.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
+        userId: {
+            type: DataTypes.UUIDV4,
+            allowNull: false,
+        },
     },
     {
         tableName: "applications",
+        underscored: true,
         sequelize,
     },
 );

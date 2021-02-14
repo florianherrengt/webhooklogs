@@ -7,7 +7,10 @@ const passportRouter = Router();
 passportRouter.use(passport.initialize());
 passportRouter.use(bodyParser.urlencoded({ extended: true }));
 
-passportRouter.get("/github", passport.authenticate("github"));
+passportRouter.get(
+    "/github",
+    passport.authenticate("github", { scope: "user:email" }),
+);
 
 passportRouter.get(
     "/github/callback",

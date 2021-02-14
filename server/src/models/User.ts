@@ -1,21 +1,24 @@
 import { DataTypes, Model } from "sequelize";
-import { sequelize } from ".";
+import { sequelize } from "./sequelize";
 import { ObjectType, Field } from "type-graphql";
 import { v4 as uuid } from "uuid";
 
 export interface UserAttributes {
     id: string;
-    email: string;
+    email?: string;
+    githubId?: string;
 }
 
 export interface UserCreationAttributes extends Omit<UserAttributes, "id"> {}
 
 @ObjectType()
-export class User extends Model implements UserAttributes {
+export class User
+    extends Model<UserAttributes, UserCreationAttributes>
+    implements UserAttributes {
     @Field()
     id: string;
-    @Field((type) => String)
-    email: string;
+    email?: string;
+    githubId?: string;
 }
 
 User.init(
@@ -27,10 +30,25 @@ User.init(
         },
         email: {
             type: DataTypes.STRING,
+            allowNull: true,
+        },
+        githubId: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
     },
     {
         tableName: "user",
+        underscored: true,
         sequelize,
+        validate: {
+            atLeastOneProvider() {
+                if (!(this.githubId || this.email)) {
+                    throw new Error(
+                        "User need an email address or a provider id",
+                    );
+                }
+            },
+        },
     },
 );

@@ -4,9 +4,7 @@ import express from "express";
 import * as bodyParser from "body-parser";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { sdk } from "./helpers";
 import { passportRouter } from "./passport/router";
-import { proxyRequest } from "./proxyRequest";
 import { pubSub } from "./pubSub";
 import { HealthzResolver } from "./resolvers/healthz";
 import { Application, HookEvent, sequelize, TargetResponse } from "./models";
@@ -55,6 +53,7 @@ const createApp = async (): Promise<express.Express> => {
         const hookEvent = await HookEvent.create({
             ...request,
             headers: request.headers,
+            applicationId: appId,
         });
 
         const result = await {
