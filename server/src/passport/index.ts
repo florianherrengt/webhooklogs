@@ -1,4 +1,4 @@
-import * as passport from "passport";
+import passport from "passport";
 import "./github";
 
 passport.serializeUser(function (user, cb) {

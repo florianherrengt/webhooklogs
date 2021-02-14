@@ -1,6 +1,6 @@
 import { Router } from "express";
 import * as bodyParser from "body-parser";
-import * as passport from "passport";
+import passport from "passport";
 
 const passportRouter = Router();
 

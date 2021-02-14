@@ -1,17 +1,26 @@
 import * as http from "http";
-import { app } from "./app";
+import { createApp } from "./app";
 import { testApp } from "./testApp/testApp";
-import fetch from "node-fetch";
+import { Application, HookEvent, TargetResponse } from "./models";
+import faker from "faker";
+import express from "express";
+import axios from "axios";
 
 describe("App", () => {
+    const appPort = faker.random.number({ min: 4000, max: 5000 });
+    const testAppPort = faker.random.number({ min: 5001, max: 6000 });
+    const appUrl = `http://localhost:${appPort}`;
+    const testAppUrl = `http://localhost:${testAppPort}`;
+    let app: express.Express;
     let testServer: http.Server;
     let appServer: http.Server;
-    beforeEach(async () => {
+    beforeAll(async () => {
+        app = await createApp();
         await new Promise((resolve) => {
-            appServer = app.listen(3000, resolve);
+            appServer = app.listen(appPort, () => resolve(null));
         });
         await new Promise((resolve) => {
-            testServer = testApp.listen(3001, resolve);
+            testServer = testApp.listen(testAppPort, () => resolve(null));
         });
     });
     afterAll(async () => {
@@ -23,16 +32,47 @@ describe("App", () => {
         });
     });
     test("proxy request", async () => {
-        const response = await fetch("http://localhost:3000/webhook/123", {
-            headers: {
-                "Content-Type": "application/json",
-                "some-customer-header": "test",
-            },
-            method: "POST",
-            body: JSON.stringify({ status: 201 }),
+        const application = await Application.create({
+            name: faker.hacker.noun(),
+            targetUrl: testAppUrl,
         });
+        const requestId = faker.random.uuid();
+        const response = await axios.post(
+            `${appUrl}/webhook/${application.id}`,
+            {
+                status: 201,
+                requestId,
+            },
+            {
+                headers: {
+                    "Content-Type": "application/json",
+                    "some-customer-header": "test",
+                },
+            },
+        );
         expect(response.status).toEqual(201);
-        const results = await response.json();
-        expect(results.headers["some-customer-header"]).toEqual("test");
+        const [hookEvent] = await HookEvent.findAll({
+            where: { body: { requestId } },
+            limit: 1,
+        });
+        const [targetResponse] = await TargetResponse.findAll({
+            where: { hookEventId: hookEvent.id },
+            limit: 1,
+        });
+        expect(hookEvent.body).toEqual({
+            status: 201,
+            requestId,
+        });
+        expect(hookEvent.headers).toMatchObject({
+            "content-type": "application/json",
+            "some-customer-header": "test",
+        });
+        expect(targetResponse.status).toEqual(201);
+        expect(targetResponse.data).toMatchObject({
+            body: {
+                status: 201,
+                requestId,
+            },
+        });
     });
 });

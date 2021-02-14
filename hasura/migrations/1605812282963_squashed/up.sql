@@ -27,7 +27,15 @@ create index users_email on users (email);
 -- ***
 -- APPLICATIONS
 -- ***
-CREATE TABLE "public"."applications"("id" uuid NOT NULL DEFAULT gen_random_uuid(), "created_at" timestamptz NOT NULL DEFAULT now(), "updated_at" timestamptz NOT NULL DEFAULT now(), "name" text, "is_proxied" boolean, "users_id" uuid NOT NULL, PRIMARY KEY ("id") , FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON UPDATE cascade ON DELETE cascade);
+CREATE TABLE "public"."applications"(
+  "id" uuid NOT NULL DEFAULT gen_random_uuid(), 
+  "created_at" timestamptz NOT NULL DEFAULT now(), 
+  "updated_at" timestamptz NOT NULL DEFAULT now(), 
+  "name" text, "is_proxied" boolean, 
+  "users_id" uuid NOT NULL,
+  PRIMARY KEY ("id"),
+  FOREIGN KEY ("users_id") REFERENCES "public"."users"("id") ON UPDATE cascade ON DELETE cascade
+);
 CREATE OR REPLACE FUNCTION "public"."set_current_timestamp_updated_at"()
 RETURNS TRIGGER AS $$
 DECLARE

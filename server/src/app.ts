@@ -1,59 +1,79 @@
-import * as express from "express";
-import * as passport from "passport";
-import * as bodyParser from "body-parser";
-import { proxyRequest } from "./proxyRequest";
-import { sdk } from "./helpers";
+import "reflect-metadata";
 import "./passport";
+import express from "express";
+import * as bodyParser from "body-parser";
+import { ApolloServer } from "apollo-server-express";
+import { buildSchema } from "type-graphql";
+import { sdk } from "./helpers";
 import { passportRouter } from "./passport/router";
+import { proxyRequest } from "./proxyRequest";
+import { pubSub } from "./pubSub";
+import { HealthzResolver } from "./resolvers/healthz";
+import { Application, HookEvent, sequelize, TargetResponse } from "./models";
+import axios from "axios";
 
-const app = express();
+type SupportedMethod = "GET" | "POST" | "PUT" | "DELETE";
 
-app.use("/auth", passportRouter);
+const isSupportedMethod = (method: string): method is SupportedMethod =>
+    ["GET", "POST", "PUT", "DELETE"].includes(method);
 
-app.use("/webhook/:appId", bodyParser.json(), async (request, response) => {
-    const {
-        method,
-        headers,
-        params: { appId },
-    } = request;
-    const { applications_by_pk } = await sdk.getApplicationById({ id: appId });
-    if (!applications_by_pk) {
-        return response
-            .status(404)
-            .json({ error: `no application with id: ${appId} found.` });
-    }
-    await sdk.insertEvent({
-        object: {
-            method,
-            payload: JSON.stringify(request.body),
-            headers: JSON.stringify(headers),
-            application_id: applications_by_pk.id,
-        },
+const createApp = async (): Promise<express.Express> => {
+    const app = express();
+    await sequelize.sync();
+    const schema = await buildSchema({
+        resolvers: [HealthzResolver],
+        pubSub,
     });
-    if (!applications_by_pk.targets.length) {
-        return response.sendStatus(200);
-    }
-    const proxiedResponses = await Promise.all(
-        applications_by_pk.targets.map((target) =>
-            proxyRequest({
-                request,
-                target,
-                method,
-            }),
-        ),
-    );
-    await sdk.insertTargetResponses({
-        objects: proxiedResponses.map((r) => ({
-            response: r.data,
-            response_time: r.responseTime,
-            targets_id: r.target.id,
-            status: r.status,
-        })),
+    const server = new ApolloServer({
+        schema,
     });
-    response.status(proxiedResponses[0].status).json(proxiedResponses[0].data);
-});
 
-app.get("/healthz", (_, response) => {
-    response.json({ ok: 1 });
-});
-export { app };
+    server.applyMiddleware({ app });
+
+    app.use("/auth", passportRouter);
+
+    app.use("/webhook/:appId", bodyParser.json(), async (request, response) => {
+        const {
+            // method,
+            headers,
+            body,
+            params: { appId },
+        } = request;
+        if (!isSupportedMethod(request.method)) {
+            return response
+                .status(501)
+                .json({ error: `${request.method} not supported yet` });
+        }
+
+        const application = await Application.findByPk(appId);
+        if (!application) {
+            return response
+                .status(404)
+                .json({ error: `no application with id: ${appId} found.` });
+        }
+
+        const hookEvent = await HookEvent.create({
+            ...request,
+            headers: request.headers,
+        });
+
+        const result = await {
+            GET: () => axios.get(application.targetUrl, { headers }),
+            POST: () => axios.post(application.targetUrl, body, { headers }),
+            PUT: () => axios.put(application.targetUrl, body, { headers }),
+            DELETE: () => axios.delete(application.targetUrl, { headers }),
+        }[request.method]();
+
+        await TargetResponse.create({
+            ...result,
+            hookEventId: hookEvent.id,
+        });
+        response.status(result.status).send(result.data);
+    });
+
+    app.get("/healthz", (_, response) => {
+        response.json({ ok: 1 });
+    });
+    return app;
+};
+export { createApp };

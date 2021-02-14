@@ -1,4 +1,4 @@
-import * as passport from "passport";
+import passport from "passport";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { config } from "../config";
 
@@ -9,7 +9,12 @@ passport.use(
             clientSecret: config.passport.github.clientSecret,
             callbackURL: "http://localhost:3000/auth/github/callback",
         },
-        function (accessToken, refreshToken, profile, done) {
+        function (
+            accessToken: string,
+            refreshToken: string,
+            profile: string,
+            done: Function,
+        ) {
             console.log(
                 JSON.stringify({ accessToken, refreshToken, profile }, null, 2),
             );
