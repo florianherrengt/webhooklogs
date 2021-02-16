@@ -1,6 +1,9 @@
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
-export const sequelize = new Sequelize("sqlite::memory:", { logging: false });
+export const sequelize = new Sequelize("sqlite::memory:", {
+    logging: false,
+    operatorsAliases: Op,
+});
 
 // export const sequelize = new Sequelize({
 //     dialect: "sqlite",

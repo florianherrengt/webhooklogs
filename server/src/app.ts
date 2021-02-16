@@ -6,8 +6,10 @@ import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
 import { passportRouter } from "./passport/router";
 import { pubSub } from "./pubSub";
-import { HealthzResolver } from "./resolvers/healthz";
+import { resolvers } from "./resolvers";
 import { Application, HookEvent, sequelize, TargetResponse } from "./models";
+import cors from "cors";
+
 import axios from "axios";
 
 type SupportedMethod = "GET" | "POST" | "PUT" | "DELETE";
@@ -17,9 +19,10 @@ const isSupportedMethod = (method: string): method is SupportedMethod =>
 
 const createApp = async (): Promise<express.Express> => {
     const app = express();
+    app.use(cors());
     await sequelize.sync();
     const schema = await buildSchema({
-        resolvers: [HealthzResolver],
+        resolvers,
         pubSub,
     });
     const server = new ApolloServer({

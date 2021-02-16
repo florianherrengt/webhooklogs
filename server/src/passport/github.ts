@@ -1,3 +1,4 @@
+import express from "express";
 import passport from "passport";
 import { Strategy as GitHubStrategy, Profile } from "passport-github2";
 import { config } from "../config";
@@ -27,3 +28,23 @@ passport.use(
         },
     ),
 );
+
+const gitHubRouter = express.Router();
+
+gitHubRouter.get(
+    "/github",
+    passport.authenticate("github", { scope: "user:email", session: false }),
+);
+
+gitHubRouter.get(
+    "/github/callback",
+    passport.authenticate("github", {
+        failureRedirect: "/auth",
+        session: false,
+    }),
+    function (req, res) {
+        res.json({ token: "fake token" });
+    },
+);
+
+export { gitHubRouter };

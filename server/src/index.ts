@@ -5,6 +5,7 @@ import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
 
 import { buildSchema } from "type-graphql";
+import { config } from "./config";
 
 (async () => {
     const app = await createApp();
@@ -14,7 +15,7 @@ import { buildSchema } from "type-graphql";
     //     resolvers: [IncomingEventResolver],
     //     pubSub,
     // });
-    server.listen(3000, () => {
+    server.listen(config.app.port, () => {
         // new SubscriptionServer(
         //     {
         //         execute,
@@ -26,6 +27,6 @@ import { buildSchema } from "type-graphql";
         //         path: "/graphql",
         //     },
         // );
-        console.log("server ready: http://localhost:3000");
+        console.log(`server ready: http://localhost:${config.app.port}`);
     });
 })();

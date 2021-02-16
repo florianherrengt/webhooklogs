@@ -17,7 +17,9 @@ export class User
     implements UserAttributes {
     @Field()
     id: string;
+    @Field({ nullable: true })
     email?: string;
+    @Field({ nullable: true })
     githubId?: string;
 }
 
