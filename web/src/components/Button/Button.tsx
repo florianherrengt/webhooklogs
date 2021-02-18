@@ -1,12 +1,15 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import classNames from 'classnames';
 
 interface ButtonProps {
   iconLeft?: React.ReactElement;
   text?: string;
   link?: string;
   disabled?: boolean;
-  type?: 'primary' | 'success';
+  outline?: boolean;
+  color?: 'primary' | 'secondary' | 'success';
 }
 
 const IconLeft = styled.span`
@@ -17,17 +20,25 @@ const IconLeft = styled.span`
 `;
 
 export const Button: React.FunctionComponent<ButtonProps> = (props) => {
-  const type = props.type || 'primary';
+  const color = props.color || 'primary';
+  const className = classNames([
+    `btn`,
+    {
+      [`btn-${color}`]: !props.outline,
+      [`btn-outline-${color}`]: props.outline,
+    },
+  ]);
+
   if (props.link) {
     return (
-      <a className={`btn btn-${type}`} href={props.link} role="button">
+      <Link className={className} to={props.link} role="button">
         <IconLeft>{props.iconLeft}</IconLeft> {props.text}
-      </a>
+      </Link>
     );
   }
   return (
-    <button disabled={props.disabled} className={`btn btn-${type}`}>
-      {props.text}
+    <button disabled={props.disabled} className={className}>
+      <IconLeft>{props.iconLeft}</IconLeft> {props.text}
     </button>
   );
 };

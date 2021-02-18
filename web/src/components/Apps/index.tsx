@@ -1,2 +1,2 @@
 export * from './AppList';
-export * from './AppNew';
+export * from './AppForm';

@@ -12,7 +12,7 @@ interface AppNewProps {
   loading?: boolean;
 }
 
-export const AppNew = (props: AppNewProps) => {
+export const AppForm = (props: AppNewProps) => {
   const { register, handleSubmit, errors } = useForm<FormData>();
 
   return (
@@ -64,7 +64,7 @@ export const AppNew = (props: AppNewProps) => {
         <div>
           <Button
             disabled={props.loading}
-            type="success"
+            color="success"
             text="Create application"
           />
         </div>

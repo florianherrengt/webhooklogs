@@ -2,6 +2,7 @@ import React from 'react';
 import { Plus } from '@styled-icons/fa-solid';
 import { ApplicationFieldsFragment } from '../../helpers';
 import { Button } from '../Button';
+import { Link } from 'react-router-dom';
 
 interface AppListProps {
   searchValue?: string;
@@ -47,7 +48,7 @@ export const AppList: React.FunctionComponent<AppListProps> = (props) => {
               className="list-group-item"
             >
               <h6>
-                <a href={`/app/${app.id}`}>{app.name}</a>
+                <Link to={`/app/${app.id}`}>{app.name}</Link>
               </h6>
               <p>{app.targetUrl}</p>
             </li>

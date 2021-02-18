@@ -1,10 +1,10 @@
 import React from 'react';
 
-export const Navbar = () => {
+export const Navbar: React.FunctionComponent = () => {
   return (
-    <nav className="navbar navbar-light bg-primary">
+    <nav className="navbar navbar-dark bg-primary">
       <div className="container-fluid">
-        <span className="navbar-brand mb-0 h1">Navbar</span>
+        <span className="navbar-brand mb-0 h1">Hookhub</span>
       </div>
     </nav>
   );

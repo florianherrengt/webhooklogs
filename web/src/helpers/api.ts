@@ -88,6 +88,19 @@ export type ApplicationsQuery = (
   )> }
 );
 
+export type ApplicationByIdQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type ApplicationByIdQuery = (
+  { __typename?: 'Query' }
+  & { applicationById: (
+    { __typename?: 'Application' }
+    & ApplicationFieldsFragment
+  ) }
+);
+
 export type CreateApplicationMutationVariables = Exact<{
   input: CreateApplicationInput;
 }>;
@@ -152,6 +165,39 @@ export function useApplicationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptio
 export type ApplicationsQueryHookResult = ReturnType<typeof useApplicationsQuery>;
 export type ApplicationsLazyQueryHookResult = ReturnType<typeof useApplicationsLazyQuery>;
 export type ApplicationsQueryResult = Apollo.QueryResult<ApplicationsQuery, ApplicationsQueryVariables>;
+export const ApplicationByIdDocument = gql`
+    query applicationById($id: String!) {
+  applicationById(id: $id) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+
+/**
+ * __useApplicationByIdQuery__
+ *
+ * To run a query within a React component, call `useApplicationByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useApplicationByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useApplicationByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useApplicationByIdQuery(baseOptions: Apollo.QueryHookOptions<ApplicationByIdQuery, ApplicationByIdQueryVariables>) {
+        return Apollo.useQuery<ApplicationByIdQuery, ApplicationByIdQueryVariables>(ApplicationByIdDocument, baseOptions);
+      }
+export function useApplicationByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ApplicationByIdQuery, ApplicationByIdQueryVariables>) {
+          return Apollo.useLazyQuery<ApplicationByIdQuery, ApplicationByIdQueryVariables>(ApplicationByIdDocument, baseOptions);
+        }
+export type ApplicationByIdQueryHookResult = ReturnType<typeof useApplicationByIdQuery>;
+export type ApplicationByIdLazyQueryHookResult = ReturnType<typeof useApplicationByIdLazyQuery>;
+export type ApplicationByIdQueryResult = Apollo.QueryResult<ApplicationByIdQuery, ApplicationByIdQueryVariables>;
 export const CreateApplicationDocument = gql`
     mutation createApplication($input: CreateApplicationInput!) {
   createApplication(input: $input) {

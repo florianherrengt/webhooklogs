@@ -4,10 +4,11 @@ import {
   BrowserRouter as Router,
   Redirect,
   Route,
+  RouteComponentProps,
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import { Navbar } from './components';
+import { HookEvent, Navbar } from './components';
 import { MeQuery, useMeLazyQuery } from './helpers';
 import {
   AppsPage,
@@ -15,6 +16,7 @@ import {
   LoginPage,
   AppDetailsPage,
   AppNewPage,
+  AppSettingsPage,
 } from './pages';
 import styled from 'styled-components';
 
@@ -111,12 +113,24 @@ export const AppRouter = () => {
             <PrivateRoute path="/app/new" exact>
               <AppNewPage />
             </PrivateRoute>
-            <PrivateRoute path="/app/:id" exact>
-              <AppDetailsPage />
-            </PrivateRoute>
+            <PrivateRoute
+              path="/app/:id"
+              exact
+              component={(props: RouteComponentProps<{ id: string }>) => {
+                return <AppDetailsPage appId={props.match.params.id} />;
+              }}
+            ></PrivateRoute>
+            <PrivateRoute
+              path="/app/:id/settings"
+              exact
+              component={(props: RouteComponentProps<{ id: string }>) => {
+                return <AppSettingsPage appId={props.match.params.id} />;
+              }}
+            ></PrivateRoute>
             <Route path="/auth/:provider/callback">
               <LoginCallbackPage />
             </Route>
+            {/* <HookEvent /> */}
           </Switch>
         </Router>
       </Container>

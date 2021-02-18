@@ -1,13 +1,12 @@
-import { Button } from '../../components';
-import { Cog } from '@styled-icons/fa-solid';
 import React from 'react';
+import { AppForm, Button } from '../../components';
 import { useApplicationByIdQuery } from '../../helpers';
 
-interface AppDetailsPageProps {
+interface AppSettingsPageProps {
   appId: string;
 }
 
-export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
+export const AppSettingsPage: React.FunctionComponent<AppSettingsPageProps> = (
   props,
 ) => {
   const { data, loading, error } = useApplicationByIdQuery({
@@ -25,17 +24,9 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
       <nav className="navbar">
         <div className="container-fluid">
           <h1 className="navbar-text">{data?.applicationById.name}</h1>
-          <div className="d-flex">
-            <Button
-              link={`/app/${props.appId}/settings`}
-              outline
-              color="secondary"
-              iconLeft={<Cog size={16} />}
-              text="Setting"
-            ></Button>
-          </div>
         </div>
       </nav>
+      <AppForm onSubmit={() => {}} />
     </div>
   );
 };
