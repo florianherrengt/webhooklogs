@@ -1,0 +1,17 @@
+fragment ApplicationFields on Application {
+  id
+  name
+  targetUrl
+  userId
+}
+query applications {
+  applications {
+    ...ApplicationFields
+  }
+}
+
+mutation createApplication($input: CreateApplicationInput!) {
+  createApplication(input: $input) {
+    ...ApplicationFields
+  }
+}

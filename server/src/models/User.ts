@@ -26,7 +26,7 @@ export class User
 User.init(
     {
         id: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: () => uuid(),
         },

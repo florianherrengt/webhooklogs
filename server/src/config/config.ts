@@ -5,6 +5,7 @@ import {
     GITHUB_CLIENT_SECRET,
     JWT_SECRET,
     PORT,
+    DATABASE_URL,
 } from "./envVar";
 
 interface Config {
@@ -13,6 +14,9 @@ interface Config {
         jwt: {
             secret: string;
         };
+    };
+    database: {
+        url: string;
     };
     hasura: {
         url: string;
@@ -32,6 +36,9 @@ export const config: Config = {
         jwt: {
             secret: JWT_SECRET,
         },
+    },
+    database: {
+        url: DATABASE_URL,
     },
     hasura: {
         url: HASURA_URL,

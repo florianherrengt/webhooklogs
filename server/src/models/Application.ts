@@ -1,7 +1,7 @@
-import { DataTypes, Model } from "sequelize";
-import { sequelize } from "./sequelize";
-import { ObjectType, Field } from "type-graphql";
-import { v4 as uuid } from "uuid";
+import { DataTypes, Model } from 'sequelize';
+import { sequelize } from './sequelize';
+import { ObjectType, Field, InputType } from 'type-graphql';
+import { v4 as uuid } from 'uuid';
 
 export interface ApplicationAttributes {
     id: string;
@@ -11,7 +11,16 @@ export interface ApplicationAttributes {
 }
 
 export interface ApplicationCreationAttributes
-    extends Omit<ApplicationAttributes, "id"> {}
+    extends Omit<ApplicationAttributes, 'id'> {}
+
+@InputType()
+export class CreateApplicationInput
+    implements Omit<ApplicationCreationAttributes, 'userId'> {
+    @Field((type) => String)
+    name: string;
+    @Field((type) => String)
+    targetUrl: string;
+}
 
 @ObjectType()
 export class Application
@@ -19,8 +28,6 @@ export class Application
     implements ApplicationAttributes {
     @Field()
     id: string;
-    @Field((type) => String)
-    contentType: string;
     @Field((type) => String)
     name: string;
     @Field((type) => String)
@@ -32,7 +39,7 @@ export class Application
 Application.init(
     {
         id: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: () => uuid(),
         },
@@ -45,12 +52,12 @@ Application.init(
             allowNull: false,
         },
         userId: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             allowNull: false,
         },
     },
     {
-        tableName: "applications",
+        tableName: 'applications',
         underscored: true,
         sequelize,
     },

@@ -33,7 +33,7 @@ export class TargetResponse
 TargetResponse.init(
     {
         id: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: () => uuid(),
         },
@@ -50,7 +50,7 @@ TargetResponse.init(
             allowNull: false,
         },
         hookEventId: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             allowNull: false,
         },
     },

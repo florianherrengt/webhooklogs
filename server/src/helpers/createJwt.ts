@@ -5,9 +5,18 @@ interface JwtPayload {
     userId: string;
 }
 
+const jwtOptions = {
+    issuer: "hookhub.com",
+    audience: "web",
+};
+
 export const createJwt = (payload: JwtPayload) =>
     jwt.sign(payload, config.app.jwt.secret, {
         expiresIn: "30 days",
-        issuer: "hookhub.com",
-        audience: "web",
+        ...jwtOptions,
     });
+
+export const verifyJwt = (token: string): JwtPayload =>
+    jwt.verify(token, config.app.jwt.secret, {
+        ...jwtOptions,
+    }) as JwtPayload;

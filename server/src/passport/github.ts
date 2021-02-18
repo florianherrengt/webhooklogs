@@ -2,6 +2,7 @@ import express from "express";
 import passport from "passport";
 import { Strategy as GitHubStrategy, Profile } from "passport-github2";
 import { config } from "../config";
+import { createJwt } from "../helpers/createJwt";
 import { User } from "../models";
 
 passport.use(
@@ -12,10 +13,10 @@ passport.use(
             callbackURL: "http://localhost:3000/auth/github/callback",
         },
         async function (
-            accessToken: string,
-            refreshToken: string,
+            _accessToken: string,
+            _refreshToken: string,
             profile: Profile,
-            done: Function,
+            done: (error: Error | null, user: express.Request["user"]) => void,
         ) {
             const user = await User.create({
                 email: profile.emails?.length
@@ -43,7 +44,10 @@ gitHubRouter.get(
         session: false,
     }),
     function (req, res) {
-        res.json({ token: "fake token" });
+        if (!req.user) {
+            return res.status(500).json({ error: "req.user is undefined" });
+        }
+        res.json({ token: createJwt({ userId: req.user.id }) });
     },
 );
 

@@ -1,39 +1,51 @@
-import "reflect-metadata";
-import "./passport";
-import express from "express";
-import * as bodyParser from "body-parser";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
-import { passportRouter } from "./passport/router";
-import { pubSub } from "./pubSub";
-import { resolvers } from "./resolvers";
-import { Application, HookEvent, sequelize, TargetResponse } from "./models";
-import cors from "cors";
+import 'reflect-metadata';
+import './passport';
+import express from 'express';
+import * as bodyParser from 'body-parser';
+import { ApolloServer } from 'apollo-server-express';
+import { buildSchema } from 'type-graphql';
+import { passportRouter } from './passport/router';
+import { pubSub } from './pubSub';
+import { resolvers } from './resolvers';
+import { Application, HookEvent, sequelize, TargetResponse } from './models';
+import cors from 'cors';
 
-import axios from "axios";
+import axios from 'axios';
+import { createGraphqlContext } from './graphqlContext';
+import { verifyJwt } from './helpers/createJwt';
 
-type SupportedMethod = "GET" | "POST" | "PUT" | "DELETE";
+type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 const isSupportedMethod = (method: string): method is SupportedMethod =>
-    ["GET", "POST", "PUT", "DELETE"].includes(method);
+    ['GET', 'POST', 'PUT', 'DELETE'].includes(method);
 
 const createApp = async (): Promise<express.Express> => {
     const app = express();
     app.use(cors());
     await sequelize.sync();
+
+    app.use((request, _response, next) => {
+        const [type, token] = request.headers.authorization?.split(' ') || [];
+        if (type === 'Bearer' && typeof token === 'string') {
+            const jwtPayload = verifyJwt(token);
+            request.user = { id: jwtPayload.userId };
+        }
+        next();
+    });
     const schema = await buildSchema({
         resolvers,
         pubSub,
     });
     const server = new ApolloServer({
         schema,
+        context: createGraphqlContext,
     });
 
     server.applyMiddleware({ app });
 
-    app.use("/auth", passportRouter);
+    app.use('/auth', passportRouter);
 
-    app.use("/webhook/:appId", bodyParser.json(), async (request, response) => {
+    app.use('/webhook/:appId', bodyParser.json(), async (request, response) => {
         const {
             // method,
             headers,
@@ -73,7 +85,7 @@ const createApp = async (): Promise<express.Express> => {
         response.status(result.status).send(result.data);
     });
 
-    app.get("/healthz", (_, response) => {
+    app.get('/healthz', (_, response) => {
         response.json({ ok: 1 });
     });
     return app;

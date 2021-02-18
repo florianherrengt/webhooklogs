@@ -35,7 +35,7 @@ export class HookEvent
 HookEvent.init(
     {
         id: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             primaryKey: true,
             defaultValue: () => uuid(),
         },
@@ -52,7 +52,7 @@ HookEvent.init(
             allowNull: true,
         },
         applicationId: {
-            type: DataTypes.UUIDV4,
+            type: DataTypes.UUID,
             allowNull: false,
         },
     },
