@@ -1,6 +1,14 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import { AppForm, Button } from '../../components';
-import { useApplicationByIdQuery } from '../../helpers';
+import {
+  useApplicationByIdQuery,
+  useUpdateApplicationByIdMutation,
+  useDeleteApplicationByIdMutation,
+  Application,
+  ApplicationsDocument,
+  ApplicationsQuery,
+} from '../../helpers';
 
 interface AppSettingsPageProps {
   appId: string;
@@ -9,24 +17,76 @@ interface AppSettingsPageProps {
 export const AppSettingsPage: React.FunctionComponent<AppSettingsPageProps> = (
   props,
 ) => {
-  const { data, loading, error } = useApplicationByIdQuery({
+  const history = useHistory();
+  const applicationByIdResults = useApplicationByIdQuery({
     variables: { id: props.appId },
     fetchPolicy: 'cache-first',
   });
-  if (loading) {
-    return <div>Loading</div>;
-  }
+  const [
+    updateApplicationById,
+    updateApplicationByIdResults,
+  ] = useUpdateApplicationByIdMutation();
+
+  const [
+    deleteApplicationById,
+    deleteApplicationByIdResults,
+  ] = useDeleteApplicationByIdMutation({
+    update(cache, { errors }) {
+      if (errors) return;
+      const { applications } = cache.readQuery({
+        query: ApplicationsDocument,
+      }) as ApplicationsQuery;
+
+      const newApplications = applications.filter(
+        ({ id }) => id !== props.appId,
+      );
+
+      cache.modify({
+        fields: {
+          applications() {
+            return newApplications;
+          },
+        },
+      });
+    },
+  });
+
+  const loading =
+    applicationByIdResults.loading ||
+    updateApplicationByIdResults.loading ||
+    deleteApplicationByIdResults.loading;
+  const error =
+    applicationByIdResults.error ||
+    updateApplicationByIdResults.error ||
+    deleteApplicationByIdResults.error;
+
   if (error) {
     return <div>{error.message}</div>;
   }
+
   return (
     <div>
       <nav className="navbar">
-        <div className="container-fluid">
-          <h1 className="navbar-text">{data?.applicationById.name}</h1>
+        <div className="container-fluid p-0">
+          <h1 className="navbar-text">Settings</h1>
         </div>
       </nav>
-      <AppForm onSubmit={() => {}} />
+      <AppForm
+        application={applicationByIdResults.data?.applicationById}
+        loading={loading}
+        onSubmit={(input) =>
+          updateApplicationById({
+            variables: { input: { ...input, id: props.appId } },
+          }).then(() => {
+            history.push(`/app/${props.appId}`);
+          })
+        }
+        onDelete={() =>
+          deleteApplicationById({ variables: { id: props.appId } }).then(() => {
+            history.push(`/apps`);
+          })
+        }
+      />
     </div>
   );
 };

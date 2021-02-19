@@ -22,6 +22,17 @@ export class CreateApplicationInput
     targetUrl: string;
 }
 
+@InputType()
+export class UpdateApplicationInput
+    implements Omit<ApplicationAttributes, 'userId'> {
+    @Field((type) => String)
+    id: string;
+    @Field((type) => String)
+    name: string;
+    @Field((type) => String)
+    targetUrl: string;
+}
+
 @ObjectType()
 export class Application
     extends Model<ApplicationAttributes, ApplicationCreationAttributes>

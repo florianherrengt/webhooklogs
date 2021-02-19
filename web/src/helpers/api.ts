@@ -60,6 +60,8 @@ export type HookEvent = {
 export type Mutation = {
   __typename?: 'Mutation';
   createApplication: Application;
+  deleteApplicationById: Scalars['Int'];
+  updateApplicationById: Application;
 };
 
 
@@ -67,7 +69,23 @@ export type MutationCreateApplicationArgs = {
   input: CreateApplicationInput;
 };
 
+
+export type MutationDeleteApplicationByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationUpdateApplicationByIdArgs = {
+  input: UpdateApplicationInput;
+};
+
 export type CreateApplicationInput = {
+  name: Scalars['String'];
+  targetUrl: Scalars['String'];
+};
+
+export type UpdateApplicationInput = {
+  id: Scalars['String'];
   name: Scalars['String'];
   targetUrl: Scalars['String'];
 };
@@ -112,6 +130,29 @@ export type CreateApplicationMutation = (
     { __typename?: 'Application' }
     & ApplicationFieldsFragment
   ) }
+);
+
+export type UpdateApplicationByIdMutationVariables = Exact<{
+  input: UpdateApplicationInput;
+}>;
+
+
+export type UpdateApplicationByIdMutation = (
+  { __typename?: 'Mutation' }
+  & { updateApplicationById: (
+    { __typename?: 'Application' }
+    & ApplicationFieldsFragment
+  ) }
+);
+
+export type DeleteApplicationByIdMutationVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type DeleteApplicationByIdMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'deleteApplicationById'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -230,6 +271,68 @@ export function useCreateApplicationMutation(baseOptions?: Apollo.MutationHookOp
 export type CreateApplicationMutationHookResult = ReturnType<typeof useCreateApplicationMutation>;
 export type CreateApplicationMutationResult = Apollo.MutationResult<CreateApplicationMutation>;
 export type CreateApplicationMutationOptions = Apollo.BaseMutationOptions<CreateApplicationMutation, CreateApplicationMutationVariables>;
+export const UpdateApplicationByIdDocument = gql`
+    mutation updateApplicationById($input: UpdateApplicationInput!) {
+  updateApplicationById(input: $input) {
+    ...ApplicationFields
+  }
+}
+    ${ApplicationFieldsFragmentDoc}`;
+export type UpdateApplicationByIdMutationFn = Apollo.MutationFunction<UpdateApplicationByIdMutation, UpdateApplicationByIdMutationVariables>;
+
+/**
+ * __useUpdateApplicationByIdMutation__
+ *
+ * To run a mutation, you first call `useUpdateApplicationByIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateApplicationByIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateApplicationByIdMutation, { data, loading, error }] = useUpdateApplicationByIdMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateApplicationByIdMutation(baseOptions?: Apollo.MutationHookOptions<UpdateApplicationByIdMutation, UpdateApplicationByIdMutationVariables>) {
+        return Apollo.useMutation<UpdateApplicationByIdMutation, UpdateApplicationByIdMutationVariables>(UpdateApplicationByIdDocument, baseOptions);
+      }
+export type UpdateApplicationByIdMutationHookResult = ReturnType<typeof useUpdateApplicationByIdMutation>;
+export type UpdateApplicationByIdMutationResult = Apollo.MutationResult<UpdateApplicationByIdMutation>;
+export type UpdateApplicationByIdMutationOptions = Apollo.BaseMutationOptions<UpdateApplicationByIdMutation, UpdateApplicationByIdMutationVariables>;
+export const DeleteApplicationByIdDocument = gql`
+    mutation deleteApplicationById($id: String!) {
+  deleteApplicationById(id: $id)
+}
+    `;
+export type DeleteApplicationByIdMutationFn = Apollo.MutationFunction<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>;
+
+/**
+ * __useDeleteApplicationByIdMutation__
+ *
+ * To run a mutation, you first call `useDeleteApplicationByIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteApplicationByIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteApplicationByIdMutation, { data, loading, error }] = useDeleteApplicationByIdMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteApplicationByIdMutation(baseOptions?: Apollo.MutationHookOptions<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>) {
+        return Apollo.useMutation<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>(DeleteApplicationByIdDocument, baseOptions);
+      }
+export type DeleteApplicationByIdMutationHookResult = ReturnType<typeof useDeleteApplicationByIdMutation>;
+export type DeleteApplicationByIdMutationResult = Apollo.MutationResult<DeleteApplicationByIdMutation>;
+export type DeleteApplicationByIdMutationOptions = Apollo.BaseMutationOptions<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>;
 export const MeDocument = gql`
     query Me {
   me {

@@ -28,13 +28,21 @@ export const AppNewPage = () => {
     return <div>{error.message}</div>;
   }
   return (
-    <AppForm
-      loading={loading}
-      onSubmit={(input) =>
-        createApplication({ variables: { input } }).then(() => {
-          history.push('/apps');
-        })
-      }
-    />
+    <div>
+      <div className="border-bottom mb-4 pb-3">
+        <h1>Create a new application</h1>
+        <p>
+          An application receives data, store it and proxy it to your target.
+        </p>
+      </div>
+      <AppForm
+        loading={loading}
+        onSubmit={(input) =>
+          createApplication({ variables: { input } }).then(() => {
+            history.push('/apps');
+          })
+        }
+      />
+    </div>
   );
 };

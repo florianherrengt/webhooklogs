@@ -21,3 +21,13 @@ mutation createApplication($input: CreateApplicationInput!) {
     ...ApplicationFields
   }
 }
+
+mutation updateApplicationById($input: UpdateApplicationInput!) {
+  updateApplicationById(input: $input) {
+    ...ApplicationFields
+  }
+}
+
+mutation deleteApplicationById($id: String!) {
+  deleteApplicationById(id: $id)
+}

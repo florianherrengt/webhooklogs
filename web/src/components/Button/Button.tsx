@@ -9,7 +9,8 @@ interface ButtonProps {
   link?: string;
   disabled?: boolean;
   outline?: boolean;
-  color?: 'primary' | 'secondary' | 'success';
+  color?: 'primary' | 'secondary' | 'success' | 'danger';
+  onClick?: () => any;
 }
 
 const IconLeft = styled.span`
@@ -31,13 +32,13 @@ export const Button: React.FunctionComponent<ButtonProps> = (props) => {
 
   if (props.link) {
     return (
-      <Link className={className} to={props.link} role="button">
+      <Link {...props} className={className} to={props.link} role="button">
         <IconLeft>{props.iconLeft}</IconLeft> {props.text}
       </Link>
     );
   }
   return (
-    <button disabled={props.disabled} className={className}>
+    <button {...props} disabled={props.disabled} className={className}>
       <IconLeft>{props.iconLeft}</IconLeft> {props.text}
     </button>
   );

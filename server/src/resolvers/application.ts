@@ -2,6 +2,7 @@ import {
     Arg,
     Ctx,
     FieldResolver,
+    Int,
     Mutation,
     Query,
     Resolver,
@@ -9,7 +10,12 @@ import {
     UnauthorizedError,
 } from 'type-graphql';
 import { GraphqlContext } from '../graphqlContext';
-import { Application, CreateApplicationInput, HookEvent } from '../models';
+import {
+    Application,
+    CreateApplicationInput,
+    HookEvent,
+    UpdateApplicationInput,
+} from '../models';
 import { HookEventResolver } from './hookEvent';
 
 @Resolver((of) => Application)
@@ -43,6 +49,30 @@ export class ApplicationResolver {
             targetUrl: input.targetUrl,
             userId: context.user.id,
         });
+    }
+    @Mutation(() => Int)
+    deleteApplicationById(
+        @Arg('id') id: string,
+        @Ctx() context: GraphqlContext,
+    ) {
+        if (!context.user?.id) {
+            return new UnauthorizedError();
+        }
+        return Application.destroy({ where: { id }, cascade: true });
+    }
+    @Mutation(() => Application)
+    async updateApplicationById(
+        @Arg('input') input: UpdateApplicationInput,
+        @Ctx() context: GraphqlContext,
+    ) {
+        const userId = context.user?.id;
+        if (!userId) {
+            return new UnauthorizedError();
+        }
+        await Application.update(input, {
+            where: { id: input.id, userId },
+        });
+        return this.applicationById(input.id);
     }
     @FieldResolver(() => [HookEvent])
     hookEvents(@Root() application: Application): Promise<HookEvent[]> {
