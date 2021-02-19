@@ -8,7 +8,7 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import { HookEvent, Navbar } from './components';
+import { Navbar } from './components';
 import { MeQuery, useMeLazyQuery } from './helpers';
 import {
   AppsPage,

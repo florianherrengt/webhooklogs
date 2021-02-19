@@ -1,29 +1,21 @@
 import {
     Arg,
     Ctx,
-    FieldResolver,
     Int,
     Mutation,
     Query,
     Resolver,
-    Root,
     UnauthorizedError,
 } from 'type-graphql';
 import { GraphqlContext } from '../graphqlContext';
 import {
     Application,
     CreateApplicationInput,
-    HookEvent,
     UpdateApplicationInput,
 } from '../models';
-import { HookEventResolver } from './hookEvent';
 
 @Resolver((of) => Application)
 export class ApplicationResolver {
-    private hookEventResolver: HookEventResolver;
-    constructor(hookEventResolver?: HookEventResolver) {
-        this.hookEventResolver = hookEventResolver || new HookEventResolver();
-    }
     @Query(() => Application)
     applicationById(@Arg('id') id: string) {
         return Application.findByPk(id);
@@ -74,12 +66,13 @@ export class ApplicationResolver {
         });
         return this.applicationById(input.id);
     }
-    @FieldResolver(() => [HookEvent])
-    hookEvents(@Root() application: Application): Promise<HookEvent[]> {
-        return this.hookEventResolver.hookEvents({
-            where: {
-                applicationId: { eq: application.id },
-            },
-        });
-    }
+    // maybe later... no time for this now.
+    // @FieldResolver(() => [HookEvent])
+    // hookEvents(@Root() application: Application): Promise<HookEvent[]> {
+    //     return this.hookEventResolver.hookEvents({
+    //         where: {
+    //             applicationId: { eq: application.id },
+    //         },
+    //     });
+    // }
 }

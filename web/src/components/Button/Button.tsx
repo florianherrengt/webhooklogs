@@ -10,7 +10,6 @@ interface ButtonProps {
   disabled?: boolean;
   outline?: boolean;
   color?: 'primary' | 'secondary' | 'success' | 'danger';
-  onClick?: () => any;
 }
 
 const IconLeft = styled.span`
@@ -20,7 +19,14 @@ const IconLeft = styled.span`
   }
 `;
 
-export const Button: React.FunctionComponent<ButtonProps> = (props) => {
+export const Button: React.FunctionComponent<
+  ButtonProps & React.DetailedHTMLProps<any, any>
+> = (props) => {
+  const htmlProps = { ...props };
+  ['iconLeft', 'text', 'link', 'outline', 'color'].forEach((prop) =>
+    Reflect.deleteProperty(htmlProps, prop),
+  );
+
   const color = props.color || 'primary';
   const className = classNames([
     `btn`,
@@ -32,13 +38,13 @@ export const Button: React.FunctionComponent<ButtonProps> = (props) => {
 
   if (props.link) {
     return (
-      <Link {...props} className={className} to={props.link} role="button">
+      <Link {...htmlProps} className={className} to={props.link} role="button">
         <IconLeft>{props.iconLeft}</IconLeft> {props.text}
       </Link>
     );
   }
   return (
-    <button {...props} disabled={props.disabled} className={className}>
+    <button {...htmlProps} disabled={props.disabled} className={className}>
       <IconLeft>{props.iconLeft}</IconLeft> {props.text}
     </button>
   );

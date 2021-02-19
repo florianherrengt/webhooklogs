@@ -1,10 +1,12 @@
-import { BuildSchemaOptions } from "type-graphql";
-import { HealthzResolver } from "./healthz";
-import { UserResolver } from "./user";
-import { ApplicationResolver } from "./application";
+import { BuildSchemaOptions } from 'type-graphql';
+import { HealthzResolver } from './healthz';
+import { UserResolver } from './user';
+import { ApplicationResolver } from './application';
+import { HookEventResolver } from './hookEvent';
 
 export const resolvers = [
     HealthzResolver,
     UserResolver,
     ApplicationResolver,
-] as BuildSchemaOptions["resolvers"];
+    HookEventResolver,
+] as BuildSchemaOptions['resolvers'];

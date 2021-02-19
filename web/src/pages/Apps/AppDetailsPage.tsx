@@ -1,4 +1,4 @@
-import { Button } from '../../components';
+import { Button, HookEventsList } from '../../components';
 import { Cog } from '@styled-icons/fa-solid';
 import React from 'react';
 import { useApplicationByIdQuery } from '../../helpers';
@@ -23,7 +23,7 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   return (
     <div>
       <nav className="navbar">
-        <div className="container-fluid">
+        <div className="container-fluid p-0 border-bottom mb-3">
           <h1 className="navbar-text">{data?.applicationById.name}</h1>
           <div className="d-flex">
             <Button
@@ -36,6 +36,7 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
           </div>
         </div>
       </nav>
+      <HookEventsList />
     </div>
   );
 };

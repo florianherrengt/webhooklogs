@@ -44,6 +44,7 @@ export const AppList: React.FunctionComponent<AppListProps> = (props) => {
           )
           .map((app) => (
             <li
+              key={app.id}
               style={{ paddingTop: 24, paddingBottom: 24 }}
               className="list-group-item"
             >
