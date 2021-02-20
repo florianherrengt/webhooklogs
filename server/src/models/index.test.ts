@@ -1,16 +1,16 @@
-import faker from "faker";
-import { Application, HookEvent, TargetResponse, User } from ".";
-import { sequelize } from "./sequelize";
+import faker from 'faker';
+import { Application, HookEvent, TargetResponse, User } from '.';
+import { sequelize } from './sequelize';
 
-describe("sequelize models", () => {
+describe('sequelize models', () => {
     beforeAll(async () => {
         await sequelize.sync();
     });
 
-    test("models are connected to each other", async () => {
+    test('models are connected to each other', async () => {
         const user = await User.create({
             email: faker.internet.email(),
-            githubId: "github_id",
+            githubId: 'github_id',
         });
         const application = await Application.create({
             name: faker.random.word(),
@@ -19,7 +19,8 @@ describe("sequelize models", () => {
         });
         const hookEvent = await HookEvent.create({
             headers: {},
-            method: "GET",
+            method: 'GET',
+            path: '/',
             applicationId: application.id,
         });
         const targetResponse = await TargetResponse.create({
@@ -30,8 +31,8 @@ describe("sequelize models", () => {
         });
         expect(targetResponse.id).toBeDefined();
     });
-    describe("User", () => {
-        test("no email or provider id", async () => {
+    describe('User', () => {
+        test('no email or provider id', async () => {
             await expect(User.create()).rejects.toBeDefined();
         });
     });

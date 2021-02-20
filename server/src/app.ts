@@ -57,7 +57,7 @@ const createApp = async (): Promise<express.Express> => {
                 .status(501)
                 .json({ error: `${request.method} not supported yet` });
         }
-
+        console.log(request.path);
         const application = await Application.findByPk(appId);
         if (!application) {
             return response
@@ -67,6 +67,7 @@ const createApp = async (): Promise<express.Express> => {
 
         const hookEvent = await HookEvent.create({
             ...request,
+            path: request.path || '/',
             headers: request.headers,
             applicationId: appId,
         });

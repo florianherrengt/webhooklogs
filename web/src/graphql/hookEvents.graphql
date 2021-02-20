@@ -1,0 +1,29 @@
+fragment HookEventsFragment on HookEvent {
+  id
+  method
+  headers
+  path
+  body
+  applicationId
+  createdAt
+  updatedAt
+  targetResponse {
+    id
+    data
+    headers
+    status
+  }
+}
+
+query hookEvents(
+  $where: HookEventWhereFields!
+  $cursor: PaginationCursorFields
+) {
+  hookEvents(where: $where, cursor: $cursor) {
+    items {
+      ...HookEventsFragment
+    }
+    total
+    hasMore
+  }
+}

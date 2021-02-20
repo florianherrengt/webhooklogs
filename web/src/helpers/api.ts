@@ -19,11 +19,24 @@ export type Query = {
   me?: Maybe<User>;
   applicationById: Application;
   applications: Array<Application>;
+  hookEventById: HookEvent;
+  hookEvents: PaginatedHookEventResponse;
 };
 
 
 export type QueryApplicationByIdArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryHookEventByIdArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryHookEventsArgs = {
+  cursor?: Maybe<PaginationCursorFields>;
+  where: HookEventWhereFields;
 };
 
 export type Healthz = {
@@ -44,17 +57,48 @@ export type Application = {
   name: Scalars['String'];
   targetUrl: Scalars['String'];
   userId: Scalars['String'];
-  hookEvents: Array<HookEvent>;
 };
 
 export type HookEvent = {
   __typename?: 'HookEvent';
   id: Scalars['String'];
   method: Scalars['String'];
-  contentType: Scalars['String'];
   headers: Scalars['String'];
   body: Scalars['String'];
+  path: Scalars['String'];
   applicationId: Scalars['String'];
+  targetResponse?: Maybe<TargetResponse>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type TargetResponse = {
+  __typename?: 'TargetResponse';
+  id: Scalars['String'];
+  data: Scalars['String'];
+  status: Scalars['Float'];
+  headers: Scalars['String'];
+  hookEventId: Scalars['String'];
+};
+
+export type PaginatedHookEventResponse = {
+  __typename?: 'PaginatedHookEventResponse';
+  items: Array<HookEvent>;
+  total: Scalars['Int'];
+  hasMore: Scalars['Boolean'];
+};
+
+export type PaginationCursorFields = {
+  after?: Maybe<Scalars['String']>;
+  limit?: Maybe<Scalars['Float']>;
+};
+
+export type HookEventWhereFields = {
+  applicationId?: Maybe<WhereOps>;
+};
+
+export type WhereOps = {
+  eq: Scalars['String'];
 };
 
 export type Mutation = {
@@ -155,6 +199,33 @@ export type DeleteApplicationByIdMutation = (
   & Pick<Mutation, 'deleteApplicationById'>
 );
 
+export type HookEventsFragmentFragment = (
+  { __typename?: 'HookEvent' }
+  & Pick<HookEvent, 'id' | 'method' | 'headers' | 'path' | 'body' | 'applicationId' | 'createdAt' | 'updatedAt'>
+  & { targetResponse?: Maybe<(
+    { __typename?: 'TargetResponse' }
+    & Pick<TargetResponse, 'id' | 'data' | 'headers' | 'status'>
+  )> }
+);
+
+export type HookEventsQueryVariables = Exact<{
+  where: HookEventWhereFields;
+  cursor?: Maybe<PaginationCursorFields>;
+}>;
+
+
+export type HookEventsQuery = (
+  { __typename?: 'Query' }
+  & { hookEvents: (
+    { __typename?: 'PaginatedHookEventResponse' }
+    & Pick<PaginatedHookEventResponse, 'total' | 'hasMore'>
+    & { items: Array<(
+      { __typename?: 'HookEvent' }
+      & HookEventsFragmentFragment
+    )> }
+  ) }
+);
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -172,6 +243,24 @@ export const ApplicationFieldsFragmentDoc = gql`
   name
   targetUrl
   userId
+}
+    `;
+export const HookEventsFragmentFragmentDoc = gql`
+    fragment HookEventsFragment on HookEvent {
+  id
+  method
+  headers
+  path
+  body
+  applicationId
+  createdAt
+  updatedAt
+  targetResponse {
+    id
+    data
+    headers
+    status
+  }
 }
     `;
 export const ApplicationsDocument = gql`
@@ -333,6 +422,44 @@ export function useDeleteApplicationByIdMutation(baseOptions?: Apollo.MutationHo
 export type DeleteApplicationByIdMutationHookResult = ReturnType<typeof useDeleteApplicationByIdMutation>;
 export type DeleteApplicationByIdMutationResult = Apollo.MutationResult<DeleteApplicationByIdMutation>;
 export type DeleteApplicationByIdMutationOptions = Apollo.BaseMutationOptions<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>;
+export const HookEventsDocument = gql`
+    query hookEvents($where: HookEventWhereFields!, $cursor: PaginationCursorFields) {
+  hookEvents(where: $where, cursor: $cursor) {
+    items {
+      ...HookEventsFragment
+    }
+    total
+    hasMore
+  }
+}
+    ${HookEventsFragmentFragmentDoc}`;
+
+/**
+ * __useHookEventsQuery__
+ *
+ * To run a query within a React component, call `useHookEventsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useHookEventsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useHookEventsQuery({
+ *   variables: {
+ *      where: // value for 'where'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useHookEventsQuery(baseOptions: Apollo.QueryHookOptions<HookEventsQuery, HookEventsQueryVariables>) {
+        return Apollo.useQuery<HookEventsQuery, HookEventsQueryVariables>(HookEventsDocument, baseOptions);
+      }
+export function useHookEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<HookEventsQuery, HookEventsQueryVariables>) {
+          return Apollo.useLazyQuery<HookEventsQuery, HookEventsQueryVariables>(HookEventsDocument, baseOptions);
+        }
+export type HookEventsQueryHookResult = ReturnType<typeof useHookEventsQuery>;
+export type HookEventsLazyQueryHookResult = ReturnType<typeof useHookEventsLazyQuery>;
+export type HookEventsQueryResult = Apollo.QueryResult<HookEventsQuery, HookEventsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

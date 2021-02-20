@@ -1,5 +1,7 @@
-import { testApp } from "./testApp";
+import { testApp } from './testApp';
 
-testApp.listen(3001, () => {
-    console.log("Test server is listening on http://localhost:3001");
+const port = process.env.PORT || 3001;
+
+testApp.listen(port, () => {
+    console.log(`Test server is listening on http://localhost:${port}`);
 });

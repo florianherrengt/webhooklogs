@@ -2,12 +2,14 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from './sequelize';
 import { ObjectType, Field } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
+import { TargetResponse } from './TargetResponse';
 
 export interface HookEventAttributes {
     id: string;
     method: string;
     headers: object;
     body?: object;
+    path: string;
     applicationId: string;
     createdAt: Date;
     updatedAt: Date;
@@ -25,13 +27,15 @@ export class HookEvent
     @Field()
     method: string;
     @Field((type) => String)
-    contentType: string;
-    @Field((type) => String)
     headers: object;
     @Field((type) => String)
     body: object;
     @Field((type) => String)
+    path: string;
+    @Field((type) => String)
     applicationId: string;
+    @Field((type) => TargetResponse, { nullable: true })
+    targetResponse?: TargetResponse;
     @Field(() => String)
     createdAt: Date;
     @Field(() => String)
@@ -51,6 +55,10 @@ HookEvent.init(
         },
         headers: {
             type: DataTypes.JSONB,
+            allowNull: false,
+        },
+        path: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         body: {

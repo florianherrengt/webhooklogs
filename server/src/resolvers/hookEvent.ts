@@ -11,7 +11,7 @@ import {
     InputType,
     Int,
 } from 'type-graphql';
-import { HookEvent, HookEventAttributes } from '../models';
+import { HookEvent, HookEventAttributes, TargetResponse } from '../models';
 import { User } from '../models/User';
 import PaginatedResponse from './PaginatedResponse';
 import { WhereOps } from './WhereOps';
@@ -86,9 +86,12 @@ export class HookEventResolver {
                         : null,
                 ],
             },
+            include: [{ model: TargetResponse as any, as: 'targetResponse' }],
             order,
             limit,
         });
+        // console.log(items);
+
         if (!items.length) {
             return {
                 items,
@@ -109,8 +112,23 @@ export class HookEventResolver {
                 ],
             },
         });
+        const mappedItems = items.map((hookEvent) => {
+            const targetResponse = hookEvent.targetResponse
+                ? {
+                      ...hookEvent.targetResponse.toJSON(),
+                      data: JSON.stringify(hookEvent.targetResponse.data),
+                      headers: JSON.stringify(hookEvent.targetResponse.headers),
+                  }
+                : null;
+            return {
+                ...hookEvent.toJSON(),
+                body: JSON.stringify(hookEvent.body),
+                headers: JSON.stringify(hookEvent.headers),
+                targetResponse,
+            };
+        });
         return {
-            items,
+            items: mappedItems as any,
             hasMore: !!hasMore,
             total,
         };
