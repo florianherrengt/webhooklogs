@@ -97,7 +97,10 @@ const createApp = async (): Promise<{
             });
             response.sendStatus(500);
         }
-        await pubSub.publish('NEW_HOOK_EVENT', hookEvent);
+        await pubSub.publish(
+            'NEW_HOOK_EVENT',
+            JSON.stringify(hookEvent.toJSON()),
+        );
     });
 
     app.get('/healthz', (_, response) => {
