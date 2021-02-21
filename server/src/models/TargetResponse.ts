@@ -1,7 +1,7 @@
-import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from "./sequelize";
-import { ObjectType, Field } from "type-graphql";
-import { v4 as uuid } from "uuid";
+import { DataTypes, Model, Optional } from 'sequelize';
+import { sequelize } from './sequelize';
+import { ObjectType, Field } from 'type-graphql';
+import { v4 as uuid } from 'uuid';
 
 export interface TargetResponseAttributes {
     id: string;
@@ -11,8 +11,16 @@ export interface TargetResponseAttributes {
     hookEventId: string;
 }
 
+export interface TargetResponseGraphqlAttributes {
+    id: string;
+    data: string;
+    status: number;
+    headers: string;
+    hookEventId: string;
+}
+
 export interface TargetResponseCreationAttributes
-    extends Optional<TargetResponseAttributes, "id"> {}
+    extends Optional<TargetResponseAttributes, 'id'> {}
 
 @ObjectType()
 export class TargetResponse
@@ -55,7 +63,7 @@ TargetResponse.init(
         },
     },
     {
-        tableName: "target_responses",
+        tableName: 'target_responses',
         underscored: true,
         sequelize,
     },

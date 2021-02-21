@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 interface HookEventsListProps {
   hookEvents?: HookEventsFragmentFragment[];
+  newHookEvents?: HookEventsFragmentFragment[];
   selectedHookEvent?: HookEventsFragmentFragment;
   onRowClick?: (hookEvent: HookEventsFragmentFragment) => void;
 }

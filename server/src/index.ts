@@ -1,20 +1,23 @@
-import { createServer } from "http";
-import { createApp } from "./app";
-import { pubSub } from "./pubSub";
-import { SubscriptionServer } from "subscriptions-transport-ws";
-import { execute, subscribe } from "graphql";
+import { createServer } from 'http';
+import { createApp } from './app';
+import { pubSub } from './pubSub';
+import { SubscriptionServer } from 'subscriptions-transport-ws';
+import { execute, subscribe } from 'graphql';
+import { resolvers } from './resolvers';
 
-import { buildSchema } from "type-graphql";
-import { config } from "./config";
+import { buildSchema } from 'type-graphql';
+import { config } from './config';
 
 (async () => {
-    const app = await createApp();
+    const { app, apolloServer } = await createApp();
 
     const server = createServer(app);
+    apolloServer.installSubscriptionHandlers(server);
     // const schema = await buildSchema({
-    //     resolvers: [IncomingEventResolver],
+    //     resolvers,
     //     pubSub,
     // });
+
     server.listen(config.app.port, () => {
         // new SubscriptionServer(
         //     {
@@ -24,7 +27,7 @@ import { config } from "./config";
         //     },
         //     {
         //         server: server,
-        //         path: "/graphql",
+        //         path: '/graphql',
         //     },
         // );
         console.log(`server ready: http://localhost:${config.app.port}`);

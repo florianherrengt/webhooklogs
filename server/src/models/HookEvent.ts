@@ -2,7 +2,10 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from './sequelize';
 import { ObjectType, Field } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
-import { TargetResponse } from './TargetResponse';
+import {
+    TargetResponse,
+    TargetResponseGraphqlAttributes,
+} from './TargetResponse';
 
 export interface HookEventAttributes {
     id: string;
@@ -13,6 +16,18 @@ export interface HookEventAttributes {
     applicationId: string;
     createdAt: Date;
     updatedAt: Date;
+}
+
+export interface HookEventGraphqlAttributes {
+    id: string;
+    method: string;
+    headers: string;
+    body?: string;
+    path: string;
+    applicationId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    targetResponse?: TargetResponseGraphqlAttributes | null;
 }
 
 export interface ProjectCreationAttributes

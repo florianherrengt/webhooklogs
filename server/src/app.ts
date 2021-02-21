@@ -19,7 +19,10 @@ type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 const isSupportedMethod = (method: string): method is SupportedMethod =>
     ['GET', 'POST', 'PUT', 'DELETE'].includes(method);
 
-const createApp = async (): Promise<express.Express> => {
+const createApp = async (): Promise<{
+    app: express.Express;
+    apolloServer: ApolloServer;
+}> => {
     const app = express();
     app.use(cors());
     await sequelize.sync();
@@ -36,12 +39,12 @@ const createApp = async (): Promise<express.Express> => {
         resolvers,
         pubSub,
     });
-    const server = new ApolloServer({
+    const apolloServer = new ApolloServer({
         schema,
         context: createGraphqlContext,
     });
 
-    server.applyMiddleware({ app });
+    apolloServer.applyMiddleware({ app });
 
     app.use('/auth', passportRouter);
 
@@ -72,23 +75,34 @@ const createApp = async (): Promise<express.Express> => {
             applicationId: appId,
         });
 
-        const result = await {
-            GET: () => axios.get(application.targetUrl, { headers }),
-            POST: () => axios.post(application.targetUrl, body, { headers }),
-            PUT: () => axios.put(application.targetUrl, body, { headers }),
-            DELETE: () => axios.delete(application.targetUrl, { headers }),
-        }[request.method]();
-
-        await TargetResponse.create({
-            ...result,
-            hookEventId: hookEvent.id,
-        });
-        response.status(result.status).send(result.data);
+        try {
+            const result = await {
+                GET: () => axios.get(application.targetUrl, { headers }),
+                POST: () =>
+                    axios.post(application.targetUrl, body, { headers }),
+                PUT: () => axios.put(application.targetUrl, body, { headers }),
+                DELETE: () => axios.delete(application.targetUrl, { headers }),
+            }[request.method]();
+            await TargetResponse.create({
+                ...result,
+                hookEventId: hookEvent.id,
+            });
+            response.status(result.status).send(result.data);
+        } catch (error) {
+            await TargetResponse.create({
+                status: 500,
+                data: {},
+                headers: {},
+                hookEventId: hookEvent.id,
+            });
+            response.sendStatus(500);
+        }
+        await pubSub.publish('NEW_HOOK_EVENT', hookEvent);
     });
 
     app.get('/healthz', (_, response) => {
         response.json({ ok: 1 });
     });
-    return app;
+    return { app, apolloServer };
 };
 export { createApp };

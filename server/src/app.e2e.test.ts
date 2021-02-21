@@ -1,12 +1,12 @@
-import * as http from "http";
-import { createApp } from "./app";
-import { testApp } from "./testApp/testApp";
-import { Application, HookEvent, TargetResponse, User } from "./models";
-import faker from "faker";
-import express from "express";
-import axios from "axios";
+import * as http from 'http';
+import { createApp } from './app';
+import { testApp } from './testApp/testApp';
+import { Application, HookEvent, TargetResponse, User } from './models';
+import faker from 'faker';
+import express from 'express';
+import axios from 'axios';
 
-describe("App", () => {
+describe('App', () => {
     const appPort = faker.random.number({ min: 4000, max: 5000 });
     const testAppPort = faker.random.number({ min: 5001, max: 6000 });
     const appUrl = `http://localhost:${appPort}`;
@@ -15,7 +15,8 @@ describe("App", () => {
     let testServer: http.Server;
     let appServer: http.Server;
     beforeAll(async () => {
-        app = await createApp();
+        const { app: _app } = await createApp();
+        app = _app;
         await new Promise((resolve) => {
             appServer = app.listen(appPort, () => resolve(null));
         });
@@ -31,7 +32,7 @@ describe("App", () => {
             appServer.close(resolve);
         });
     });
-    test("proxy request", async () => {
+    test('proxy request', async () => {
         const user = await User.create({
             email: faker.internet.email(),
         });
@@ -49,8 +50,8 @@ describe("App", () => {
             },
             {
                 headers: {
-                    "Content-Type": "application/json",
-                    "some-customer-header": "test",
+                    'Content-Type': 'application/json',
+                    'some-customer-header': 'test',
                 },
             },
         );
@@ -68,8 +69,8 @@ describe("App", () => {
             requestId,
         });
         expect(hookEvent.headers).toMatchObject({
-            "content-type": "application/json",
-            "some-customer-header": "test",
+            'content-type': 'application/json',
+            'some-customer-header': 'test',
         });
         expect(targetResponse.status).toEqual(201);
         expect(targetResponse.data).toMatchObject({

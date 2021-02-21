@@ -5,6 +5,7 @@ import {
   HookEventsFragmentFragment,
   useApplicationByIdQuery,
   useHookEventsQuery,
+  useNewHookEventSubscription,
 } from '../../helpers';
 import { HookEventDetails } from '../../components/HookEvents/HookEventDetails';
 
@@ -12,9 +13,22 @@ interface AppDetailsPageProps {
   appId: string;
 }
 
+const mergeNewData = (
+  oldData: HookEventsFragmentFragment[] = [],
+  newElement?: HookEventsFragmentFragment,
+): HookEventsFragmentFragment[] => {
+  if (!newElement) return oldData;
+
+  return [newElement, ...oldData];
+};
+
 export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   props,
 ) => {
+  const newHookEventSubscriptionResults = useNewHookEventSubscription({
+    variables: { applicationId: props.appId },
+  });
+  console.log({ newHookEventSubscriptionResults });
   const applicationByIdResults = useApplicationByIdQuery({
     variables: { id: props.appId },
     fetchPolicy: 'cache-first',
@@ -27,7 +41,10 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
     HookEventsFragmentFragment | undefined
   >();
   const loading = applicationByIdResults.loading || hookEventsResults.loading;
-  const error = applicationByIdResults.error || hookEventsResults.error;
+  const error =
+    applicationByIdResults.error ||
+    hookEventsResults.error ||
+    newHookEventSubscriptionResults.error;
 
   if (loading) {
     return <div>Loading</div>;
@@ -35,6 +52,12 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   if (error) {
     return <div>{error.message}</div>;
   }
+
+  const hookEvents = mergeNewData(
+    hookEventsResults.data?.hookEvents.items,
+    newHookEventSubscriptionResults.data?.newHookEvent,
+  );
+
   return (
     <div>
       <nav className="navbar">
@@ -56,19 +79,13 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
       <div className="row">
         <div className="col-6">
           <HookEventsList
-            hookEvents={hookEventsResults.data?.hookEvents.items}
-            selectedHookEvent={
-              selectedHookEvent || hookEventsResults.data?.hookEvents.items[0]
-            }
+            hookEvents={hookEvents}
+            selectedHookEvent={selectedHookEvent || hookEvents[0]}
             onRowClick={setSelectedHookEvent}
           />
         </div>
         <div className="col-6 border-start">
-          <HookEventDetails
-            hookEvent={
-              selectedHookEvent || hookEventsResults.data?.hookEvents.items[0]
-            }
-          />
+          <HookEventDetails hookEvent={selectedHookEvent || hookEvents[0]} />
         </div>
       </div>
     </div>

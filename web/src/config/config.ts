@@ -1,11 +1,11 @@
 interface Config {
-    api: {
-        url: string;
-    };
+  api: {
+    url: string;
+  };
 }
 
 export const config: Config = {
-    api: {
-        url: "http://localhost:3001",
-    },
+  api: {
+    url: 'localhost:3001',
+  },
 };

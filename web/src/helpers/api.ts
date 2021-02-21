@@ -134,6 +134,16 @@ export type UpdateApplicationInput = {
   targetUrl: Scalars['String'];
 };
 
+export type Subscription = {
+  __typename?: 'Subscription';
+  newHookEvent: HookEvent;
+};
+
+
+export type SubscriptionNewHookEventArgs = {
+  applicationId: Scalars['String'];
+};
+
 export type ApplicationFieldsFragment = (
   { __typename?: 'Application' }
   & Pick<Application, 'id' | 'name' | 'targetUrl' | 'userId'>
@@ -223,6 +233,19 @@ export type HookEventsQuery = (
       { __typename?: 'HookEvent' }
       & HookEventsFragmentFragment
     )> }
+  ) }
+);
+
+export type NewHookEventSubscriptionVariables = Exact<{
+  applicationId: Scalars['String'];
+}>;
+
+
+export type NewHookEventSubscription = (
+  { __typename?: 'Subscription' }
+  & { newHookEvent: (
+    { __typename?: 'HookEvent' }
+    & HookEventsFragmentFragment
   ) }
 );
 
@@ -460,6 +483,35 @@ export function useHookEventsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type HookEventsQueryHookResult = ReturnType<typeof useHookEventsQuery>;
 export type HookEventsLazyQueryHookResult = ReturnType<typeof useHookEventsLazyQuery>;
 export type HookEventsQueryResult = Apollo.QueryResult<HookEventsQuery, HookEventsQueryVariables>;
+export const NewHookEventDocument = gql`
+    subscription newHookEvent($applicationId: String!) {
+  newHookEvent(applicationId: $applicationId) {
+    ...HookEventsFragment
+  }
+}
+    ${HookEventsFragmentFragmentDoc}`;
+
+/**
+ * __useNewHookEventSubscription__
+ *
+ * To run a query within a React component, call `useNewHookEventSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewHookEventSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewHookEventSubscription({
+ *   variables: {
+ *      applicationId: // value for 'applicationId'
+ *   },
+ * });
+ */
+export function useNewHookEventSubscription(baseOptions: Apollo.SubscriptionHookOptions<NewHookEventSubscription, NewHookEventSubscriptionVariables>) {
+        return Apollo.useSubscription<NewHookEventSubscription, NewHookEventSubscriptionVariables>(NewHookEventDocument, baseOptions);
+      }
+export type NewHookEventSubscriptionHookResult = ReturnType<typeof useNewHookEventSubscription>;
+export type NewHookEventSubscriptionResult = Apollo.SubscriptionResult<NewHookEventSubscription>;
 export const MeDocument = gql`
     query Me {
   me {

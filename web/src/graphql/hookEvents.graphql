@@ -27,3 +27,9 @@ query hookEvents(
     hasMore
   }
 }
+
+subscription newHookEvent($applicationId: String!) {
+  newHookEvent(applicationId: $applicationId) {
+    ...HookEventsFragment
+  }
+}
