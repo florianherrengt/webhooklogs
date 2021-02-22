@@ -9,27 +9,19 @@ import { buildSchema } from 'type-graphql';
 import { config } from './config';
 
 (async () => {
-    const { app, apolloServer } = await createApp();
+    const { app, apolloServer, sequelize } = await createApp();
 
     const server = createServer(app);
     apolloServer.installSubscriptionHandlers(server);
-    // const schema = await buildSchema({
-    //     resolvers,
-    //     pubSub,
-    // });
-
     server.listen(config.app.port, () => {
-        // new SubscriptionServer(
-        //     {
-        //         execute,
-        //         subscribe,
-        //         schema,
-        //     },
-        //     {
-        //         server: server,
-        //         path: '/graphql',
-        //     },
-        // );
         console.log(`server ready: http://localhost:${config.app.port}`);
+    });
+
+    process.on('SIGTERM', () => {
+        server.close(async () => {
+            console.log('Http server closed.');
+            await sequelize.close();
+            process.exit(0);
+        });
     });
 })();

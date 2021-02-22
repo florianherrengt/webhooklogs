@@ -13,6 +13,7 @@ import cors from 'cors';
 import axios from 'axios';
 import { createGraphqlContext } from './graphqlContext';
 import { verifyJwt } from './helpers/createJwt';
+import { Sequelize } from 'sequelize/types';
 
 type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -22,6 +23,7 @@ const isSupportedMethod = (method: string): method is SupportedMethod =>
 const createApp = async (): Promise<{
     app: express.Express;
     apolloServer: ApolloServer;
+    sequelize: Sequelize;
 }> => {
     const app = express();
     app.use(cors());
@@ -106,6 +108,6 @@ const createApp = async (): Promise<{
     app.get('/healthz', (_, response) => {
         response.json({ ok: 1 });
     });
-    return { app, apolloServer };
+    return { app, apolloServer, sequelize };
 };
 export { createApp };
