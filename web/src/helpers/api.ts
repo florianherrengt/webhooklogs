@@ -48,6 +48,7 @@ export type User = {
   __typename?: 'User';
   id: Scalars['String'];
   email?: Maybe<Scalars['String']>;
+  username: Scalars['String'];
   githubId?: Maybe<Scalars['String']>;
 };
 
@@ -136,7 +137,7 @@ export type UpdateApplicationInput = {
 
 export type Subscription = {
   __typename?: 'Subscription';
-  newHookEvent: HookEvent;
+  newHookEvent?: Maybe<HookEvent>;
 };
 
 
@@ -243,10 +244,15 @@ export type NewHookEventSubscriptionVariables = Exact<{
 
 export type NewHookEventSubscription = (
   { __typename?: 'Subscription' }
-  & { newHookEvent: (
+  & { newHookEvent?: Maybe<(
     { __typename?: 'HookEvent' }
     & HookEventsFragmentFragment
-  ) }
+  )> }
+);
+
+export type UserFragmentFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username' | 'email' | 'githubId'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -256,7 +262,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id'>
+    & UserFragmentFragment
   )> }
 );
 
@@ -284,6 +290,14 @@ export const HookEventsFragmentFragmentDoc = gql`
     headers
     status
   }
+}
+    `;
+export const UserFragmentFragmentDoc = gql`
+    fragment UserFragment on User {
+  id
+  username
+  email
+  githubId
 }
     `;
 export const ApplicationsDocument = gql`
@@ -515,10 +529,10 @@ export type NewHookEventSubscriptionResult = Apollo.SubscriptionResult<NewHookEv
 export const MeDocument = gql`
     query Me {
   me {
-    id
+    ...UserFragment
   }
 }
-    `;
+    ${UserFragmentFragmentDoc}`;
 
 /**
  * __useMeQuery__

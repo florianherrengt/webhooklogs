@@ -167,17 +167,24 @@ export class HookEventResolver {
     }
     @Subscription(() => HookEvent, {
         topics: 'NEW_HOOK_EVENT',
-        filter: ({ payload, args }) =>
-            args.applicationId === payload.applicationId,
+        filter: ({ payload, args }) => {
+            try {
+                return args.applicationId === JSON.parse(payload).applicationId;
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
+        },
         nullable: true,
     })
     async newHookEvent(
-        @Root() hookEvent: HookEvent,
+        @Root() hookEventString: string,
         @Args() args: NewHookEventArgs,
         @Ctx() context: GraphqlContext,
     ): Promise<HookEventGraphqlAttributes | Error | null> {
-        console.log('NEW_HOOK_EVENT', { hookEvent, args, context });
-        if (!hookEvent) return null;
+        console.log('NEW_HOOK_EVENT', { hookEventString, args, context });
+        if (!hookEventString) return null;
+        const hookEvent: HookEventAttributes = JSON.parse(hookEventString);
         const applications = await Application.findAll({
             where: { userId: { [Op.eq]: context.user?.id } },
         });

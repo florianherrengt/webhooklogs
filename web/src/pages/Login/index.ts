@@ -1,2 +1,2 @@
-export * from "./LoginPage";
-export * from "./Callback";
+export * from './LoginPage';
+export * from './LoginCallbackPage';

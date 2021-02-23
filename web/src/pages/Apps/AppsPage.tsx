@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { AppList } from '../../components';
+import { AppContainer } from '../../AppRouter';
+import { AppList, Navbar } from '../../components';
 import { useApplicationsQuery } from '../../helpers';
 
 export const AppsPage = () => {
@@ -12,10 +13,15 @@ export const AppsPage = () => {
     <div>{error.message}</div>;
   }
   return (
-    <AppList
-      apps={data?.applications}
-      onSearchChange={setSearchValue}
-      searchValue={searchValue}
-    />
+    <div>
+      <Navbar />
+      <AppContainer>
+        <AppList
+          apps={data?.applications}
+          onSearchChange={setSearchValue}
+          searchValue={searchValue}
+        />
+      </AppContainer>
+    </div>
   );
 };

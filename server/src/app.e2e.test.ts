@@ -34,6 +34,7 @@ describe('App', () => {
     });
     test('proxy request', async () => {
         const user = await User.create({
+            username: faker.internet.userName(),
             email: faker.internet.email(),
         });
         const application = await Application.create({

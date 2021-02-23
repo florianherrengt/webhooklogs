@@ -35,7 +35,20 @@ export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
             >
               <div className="row">
                 <div className="col">
-                  <Circle className="me-2 text-success" size={10} />
+                  <Circle
+                    className={classNames([
+                      'me-2',
+                      {
+                        'text-success':
+                          !hookEvent.targetResponse?.status ||
+                          hookEvent.targetResponse?.status < 300,
+                        'text-danger':
+                          hookEvent.targetResponse?.status &&
+                          hookEvent.targetResponse?.status > 300,
+                      },
+                    ])}
+                    size={10}
+                  />
                   {hookEvent.method} - {hookEvent.path}
                 </div>
                 <div className="col-md-auto">

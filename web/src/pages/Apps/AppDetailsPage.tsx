@@ -15,7 +15,7 @@ interface AppDetailsPageProps {
 
 const mergeNewData = (
   oldData: HookEventsFragmentFragment[] = [],
-  newElement?: HookEventsFragmentFragment,
+  newElement?: HookEventsFragmentFragment | null,
 ): HookEventsFragmentFragment[] => {
   if (!newElement) return oldData;
 

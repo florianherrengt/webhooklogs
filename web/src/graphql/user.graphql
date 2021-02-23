@@ -1,5 +1,12 @@
+fragment UserFragment on User {
+  id
+  username
+  email
+  githubId
+}
+
 query Me {
-    me {
-        id
-    }
+  me {
+    ...UserFragment
+  }
 }

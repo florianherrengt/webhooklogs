@@ -9,7 +9,16 @@ interface ButtonProps {
   link?: string;
   disabled?: boolean;
   outline?: boolean;
-  color?: 'primary' | 'secondary' | 'success' | 'danger';
+  external?: boolean;
+  color?:
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'danger'
+    | 'warning'
+    | 'info'
+    | 'light'
+    | 'dark';
 }
 
 const IconLeft = styled.span`
@@ -23,7 +32,7 @@ export const Button: React.FunctionComponent<
   ButtonProps & React.DetailedHTMLProps<any, any>
 > = (props) => {
   const htmlProps = { ...props };
-  ['iconLeft', 'text', 'link', 'outline', 'color'].forEach((prop) =>
+  ['iconLeft', 'text', 'link', 'outline', 'color', 'external'].forEach((prop) =>
     Reflect.deleteProperty(htmlProps, prop),
   );
 
@@ -35,6 +44,14 @@ export const Button: React.FunctionComponent<
       [`btn-outline-${color}`]: props.outline,
     },
   ]);
+
+  if (props.external) {
+    return (
+      <a {...htmlProps} href={props.link} className={className} to={props.link}>
+        <IconLeft>{props.iconLeft}</IconLeft> {props.text}
+      </a>
+    );
+  }
 
   if (props.link) {
     return (

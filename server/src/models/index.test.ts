@@ -9,6 +9,7 @@ describe('sequelize models', () => {
 
     test('models are connected to each other', async () => {
         const user = await User.create({
+            username: faker.internet.userName(),
             email: faker.internet.email(),
             githubId: 'github_id',
         });

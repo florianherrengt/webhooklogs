@@ -8,7 +8,6 @@ import {
   RouteProps,
   Switch,
 } from 'react-router-dom';
-import { Navbar } from './components';
 import { MeQuery, useMeLazyQuery } from './helpers';
 import {
   AppsPage,
@@ -19,6 +18,7 @@ import {
   AppSettingsPage,
 } from './pages';
 import styled from 'styled-components';
+import { SettingsPage } from './pages/Settings';
 
 interface AuthContext {
   user?: MeQuery['me'] | null;
@@ -32,7 +32,7 @@ const authContext = createContext<AuthContext>({
   called: false,
 });
 
-function useAuth() {
+export function useAuth() {
   return useContext(authContext);
 }
 
@@ -91,7 +91,7 @@ const PrivateRoute: React.FunctionComponent<RouteProps> = ({
   );
 };
 
-const Container = styled.div`
+export const AppContainer = styled.div`
   max-width: 860px;
   margin: auto;
   padding-top: 24px;
@@ -100,40 +100,44 @@ const Container = styled.div`
 export const AppRouter = () => {
   return (
     <ProvideAuth>
-      <Navbar />
-      <Container>
-        <Router>
-          <Switch>
-            <Route path="/auth" exact>
-              <LoginPage />
-            </Route>
-            <PrivateRoute path="/apps" exact>
-              <AppsPage />
-            </PrivateRoute>
-            <PrivateRoute path="/app/new" exact>
-              <AppNewPage />
-            </PrivateRoute>
-            <PrivateRoute
-              path="/app/:id"
-              exact
-              component={(props: RouteComponentProps<{ id: string }>) => {
-                return <AppDetailsPage appId={props.match.params.id} />;
-              }}
-            ></PrivateRoute>
-            <PrivateRoute
-              path="/app/:id/settings"
-              exact
-              component={(props: RouteComponentProps<{ id: string }>) => {
-                return <AppSettingsPage appId={props.match.params.id} />;
-              }}
-            ></PrivateRoute>
-            <Route path="/auth/:provider/callback">
-              <LoginCallbackPage />
-            </Route>
-            {/* <HookEvent /> */}
-          </Switch>
-        </Router>
-      </Container>
+      <Router>
+        <Switch>
+          <Route path="/auth" exact>
+            <LoginPage />
+          </Route>
+          <PrivateRoute path="/apps" exact>
+            <AppsPage />
+          </PrivateRoute>
+          <PrivateRoute path="/app/new" exact>
+            <AppNewPage />
+          </PrivateRoute>
+          <PrivateRoute
+            path="/app/:id"
+            exact
+            component={(props: RouteComponentProps<{ id: string }>) => {
+              return <AppDetailsPage appId={props.match.params.id} />;
+            }}
+          ></PrivateRoute>
+          <PrivateRoute
+            path="/app/:id/settings"
+            exact
+            component={(props: RouteComponentProps<{ id: string }>) => {
+              return <AppSettingsPage appId={props.match.params.id} />;
+            }}
+          ></PrivateRoute>
+          <PrivateRoute path="/settings" exact>
+            <SettingsPage />
+          </PrivateRoute>
+
+          <Route path="/auth/:provider/callback">
+            <LoginCallbackPage />
+          </Route>
+          {/* <HookEvent /> */}
+          {/* <Route path="/" exact>
+              <Redirect to="/apps" />
+            </Route> */}
+        </Switch>
+      </Router>
     </ProvideAuth>
   );
 };
