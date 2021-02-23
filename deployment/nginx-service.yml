@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+    name: ingress-nginx
+    namespace: ingress-nginx
+    labels:
+        app.kubernetes.io/name: ingress-nginx
+        app.kubernetes.io/part-of: ingress-nginx
+spec:
+    # this setting is t make sure the source IP address is preserved.
+    externalTrafficPolicy: Local
+    type: NodePort
+    externalIPs:
+        - 51.68.214.120
+    selector:
+        app.kubernetes.io/name: ingress-nginx
+    ports:
+        - name: http
+          port: 80
+          targetPort: http
+        - name: https
+          port: 443
+          targetPort: https
