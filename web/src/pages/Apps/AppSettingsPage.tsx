@@ -1,11 +1,10 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { AppForm, Button } from '../../components';
+import { AppForm } from '../../components';
 import {
   useApplicationByIdQuery,
   useUpdateApplicationByIdMutation,
   useDeleteApplicationByIdMutation,
-  Application,
   ApplicationsDocument,
   ApplicationsQuery,
 } from '../../helpers';
@@ -74,13 +73,12 @@ export const AppSettingsPage: React.FunctionComponent<AppSettingsPageProps> = (
       <AppForm
         application={applicationByIdResults.data?.applicationById}
         loading={loading}
-        onSubmit={(input) =>
-          updateApplicationById({
+        onSubmit={async (input) => {
+          await updateApplicationById({
             variables: { input: { ...input, id: props.appId } },
-          }).then(() => {
-            history.push(`/app/${props.appId}`);
-          })
-        }
+          });
+          history.push(`/app/${props.appId}`);
+        }}
         onDelete={() =>
           deleteApplicationById({ variables: { id: props.appId } }).then(() => {
             history.push(`/apps`);

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Circle } from '@styled-icons/fa-solid';
-import { HookEvent, HookEventsFragmentFragment } from '../../helpers';
 import classNames from 'classnames';
+import { HookEventsFragmentFragment } from '../../helpers';
 
 interface HookEventsListProps {
   hookEvents?: HookEventsFragmentFragment[];

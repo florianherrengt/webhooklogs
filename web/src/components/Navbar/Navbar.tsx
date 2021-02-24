@@ -1,8 +1,7 @@
 import React from 'react';
-import { Button } from '../Button';
-import { Maybe, User } from '../../helpers';
-import { useAuth } from '../../AppRouter';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../AppRouter';
+import { User } from '../../helpers';
 
 interface NavbarProps {
   me?: User | null;

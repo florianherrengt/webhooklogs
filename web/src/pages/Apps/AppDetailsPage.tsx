@@ -25,10 +25,10 @@ const mergeNewData = (
 export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   props,
 ) => {
+  console.log('re-render AppDetailsPage');
   const newHookEventSubscriptionResults = useNewHookEventSubscription({
     variables: { applicationId: props.appId },
   });
-  console.log({ newHookEventSubscriptionResults });
   const applicationByIdResults = useApplicationByIdQuery({
     variables: { id: props.appId },
     fetchPolicy: 'cache-first',

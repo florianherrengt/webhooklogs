@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { HookEvent, HookEventsFragmentFragment } from '../../helpers';
-import ReactJson from 'react-json-view';
-import styled from 'styled-components';
-import { useHistory } from 'react-router-dom';
+import React from 'react';
 import classNames from 'classnames';
+import ReactJson from 'react-json-view';
+import { useHistory } from 'react-router-dom';
+import { HookEventsFragmentFragment } from '../../helpers';
 
 interface HookEventDetailsProps {
   hookEvent?: HookEventsFragmentFragment;
