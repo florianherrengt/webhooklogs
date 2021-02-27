@@ -49,7 +49,8 @@ export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
                     ])}
                     size={10}
                   />
-                  {hookEvent.method} - {hookEvent.path}
+                  {hookEvent.method} - {hookEvent.targetResponse?.status}{' '}
+                  {hookEvent.path}
                 </div>
                 <div className="col-md-auto">
                   {createdAt.toLocaleDateString()}{' '}

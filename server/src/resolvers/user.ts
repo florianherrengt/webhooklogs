@@ -13,6 +13,7 @@ import { UpdateUserInput, User } from '../models/User';
 import { Stripe } from 'stripe';
 import { stripe } from '../helpers/stripe';
 import { config } from '../config';
+import { sequelize } from '../models';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -58,7 +59,25 @@ export class UserResolver {
         if (!context.user?.id) {
             return new UnauthorizedError();
         }
-        await User.update(input, { where: { id: context.user.id } });
+        const user = await User.findByPk(context.user.id);
+        if (!user) {
+            return new Error(`User with id ${context.user.id} not found`);
+        }
+        const transaction = await sequelize.transaction();
+        try {
+            await User.update(input, {
+                where: { id: context.user.id },
+                transaction,
+            });
+            await stripe.customers.update(user.stripeCustomerId, {
+                name: input.username || user.username,
+                email: input.email || user.email,
+            });
+            await transaction.commit();
+        } catch (error) {
+            console.error(error);
+            await transaction.rollback();
+        }
         return this.me(context);
     }
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { routerPath } from '../../AppRouter';
+import { Loading } from '../../components';
 import { AccountSettings } from '../../components/User/AccountSettings';
 import {
   useMeQuery,
@@ -39,7 +40,7 @@ export const SettingsPage: React.FunctionComponent = () => {
     updateAccountSettingsResults.error;
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
   if (error) {
     return <div>Oops... Something went wrong. {error.message}</div>;

@@ -29,6 +29,7 @@
         "react-json-view": "^1.19.1",
         "react-router-dom": "^5.2.0",
         "react-scripts": "^4.0.3",
+        "react-use": "^17.1.1",
         "styled-components": "^5.2.1",
         "styled-icons": "^10.28.0",
         "subscriptions-transport-ws": "^0.9.18",

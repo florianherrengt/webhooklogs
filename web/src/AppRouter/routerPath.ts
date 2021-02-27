@@ -1,6 +1,6 @@
 export const routerPath = {
   auth: '/auth',
-  authCallback: (provider: string) => `auth/${provider}/callback`,
+  authCallback: (provider: string) => `/auth/${provider}/callback`,
   apps: '/apps',
   newApp: '/apps/new',
   appDetails: (id: string) => `/app/${id}`,

@@ -7,11 +7,11 @@ export const PrivateRoute: React.FunctionComponent<RouteProps> = ({
   ...rest
 }) => {
   const auth = useAuth();
-
   return (
     <Route
       {...rest}
       render={({ location }) => {
+        console.log(auth.called && !auth.loading && !auth.user, { auth });
         return auth.called && !auth.loading && !auth.user ? (
           <Redirect
             to={{

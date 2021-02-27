@@ -10,7 +10,9 @@ export const Navbar: React.FunctionComponent<NavbarProps> = (props) => {
   return (
     <nav className="navbar bg-light">
       <div className="container-fluid">
-        <span className="navbar-brand h1">Hookhub</span>
+        <Link className="navbar-brand h1 text-decoration-none text-dark" to="/">
+          Hookhub
+        </Link>
         {props.me ? (
           <div className="dropdown">
             <button

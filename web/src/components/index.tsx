@@ -6,3 +6,4 @@ export * from './Button';
 export * from './User';
 export * from './Alert';
 export * from './AccountSettings';
+export * from './Loading';
