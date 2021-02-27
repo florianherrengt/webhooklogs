@@ -50,6 +50,10 @@ export type User = {
   email?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   githubId?: Maybe<Scalars['String']>;
+  stripeCustomerPortalLink: Scalars['String'];
+  stripeCustomerId: Scalars['String'];
+  hasPaymentMethod: Scalars['Boolean'];
+  isSubscriptionValid: Scalars['Boolean'];
 };
 
 export type Application = {
@@ -104,9 +108,15 @@ export type WhereOps = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  updateAccountSettings: User;
   createApplication: Application;
   deleteApplicationById: Scalars['Int'];
   updateApplicationById: Application;
+};
+
+
+export type MutationUpdateAccountSettingsArgs = {
+  input: UpdateUserInput;
 };
 
 
@@ -122,6 +132,11 @@ export type MutationDeleteApplicationByIdArgs = {
 
 export type MutationUpdateApplicationByIdArgs = {
   input: UpdateApplicationInput;
+};
+
+export type UpdateUserInput = {
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
 };
 
 export type CreateApplicationInput = {
@@ -250,9 +265,14 @@ export type NewHookEventSubscription = (
   )> }
 );
 
-export type UserFragmentFragment = (
+export type UserFieldsFragment = (
   { __typename?: 'User' }
   & Pick<User, 'id' | 'username' | 'email' | 'githubId'>
+);
+
+export type UserPaymentDetailsFieldsFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'hasPaymentMethod' | 'isSubscriptionValid'>
 );
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
@@ -262,8 +282,55 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & UserFragmentFragment
+    & UserFieldsFragment
   )> }
+);
+
+export type GetPaymentDetailsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetPaymentDetailsQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'hasPaymentMethod' | 'isSubscriptionValid'>
+  )> }
+);
+
+export type GetUserAccountSettingsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserAccountSettingsQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & UserFieldsFragment
+    & UserPaymentDetailsFieldsFragment
+  )> }
+);
+
+export type GetUserStripeCustomerPortalLinkQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetUserStripeCustomerPortalLinkQuery = (
+  { __typename?: 'Query' }
+  & { me?: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'stripeCustomerPortalLink'>
+  )> }
+);
+
+export type UpdateAccountSettingsMutationVariables = Exact<{
+  input: UpdateUserInput;
+}>;
+
+
+export type UpdateAccountSettingsMutation = (
+  { __typename?: 'Mutation' }
+  & { updateAccountSettings: (
+    { __typename?: 'User' }
+    & UserFieldsFragment
+  ) }
 );
 
 export const ApplicationFieldsFragmentDoc = gql`
@@ -292,12 +359,18 @@ export const HookEventsFragmentFragmentDoc = gql`
   }
 }
     `;
-export const UserFragmentFragmentDoc = gql`
-    fragment UserFragment on User {
+export const UserFieldsFragmentDoc = gql`
+    fragment UserFields on User {
   id
   username
   email
   githubId
+}
+    `;
+export const UserPaymentDetailsFieldsFragmentDoc = gql`
+    fragment UserPaymentDetailsFields on User {
+  hasPaymentMethod
+  isSubscriptionValid
 }
     `;
 export const ApplicationsDocument = gql`
@@ -529,10 +602,10 @@ export type NewHookEventSubscriptionResult = Apollo.SubscriptionResult<NewHookEv
 export const MeDocument = gql`
     query Me {
   me {
-    ...UserFragment
+    ...UserFields
   }
 }
-    ${UserFragmentFragmentDoc}`;
+    ${UserFieldsFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -558,3 +631,134 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const GetPaymentDetailsDocument = gql`
+    query getPaymentDetails {
+  me {
+    hasPaymentMethod
+    isSubscriptionValid
+  }
+}
+    `;
+
+/**
+ * __useGetPaymentDetailsQuery__
+ *
+ * To run a query within a React component, call `useGetPaymentDetailsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPaymentDetailsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetPaymentDetailsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetPaymentDetailsQuery(baseOptions?: Apollo.QueryHookOptions<GetPaymentDetailsQuery, GetPaymentDetailsQueryVariables>) {
+        return Apollo.useQuery<GetPaymentDetailsQuery, GetPaymentDetailsQueryVariables>(GetPaymentDetailsDocument, baseOptions);
+      }
+export function useGetPaymentDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPaymentDetailsQuery, GetPaymentDetailsQueryVariables>) {
+          return Apollo.useLazyQuery<GetPaymentDetailsQuery, GetPaymentDetailsQueryVariables>(GetPaymentDetailsDocument, baseOptions);
+        }
+export type GetPaymentDetailsQueryHookResult = ReturnType<typeof useGetPaymentDetailsQuery>;
+export type GetPaymentDetailsLazyQueryHookResult = ReturnType<typeof useGetPaymentDetailsLazyQuery>;
+export type GetPaymentDetailsQueryResult = Apollo.QueryResult<GetPaymentDetailsQuery, GetPaymentDetailsQueryVariables>;
+export const GetUserAccountSettingsDocument = gql`
+    query getUserAccountSettings {
+  me {
+    ...UserFields
+    ...UserPaymentDetailsFields
+  }
+}
+    ${UserFieldsFragmentDoc}
+${UserPaymentDetailsFieldsFragmentDoc}`;
+
+/**
+ * __useGetUserAccountSettingsQuery__
+ *
+ * To run a query within a React component, call `useGetUserAccountSettingsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserAccountSettingsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserAccountSettingsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserAccountSettingsQuery(baseOptions?: Apollo.QueryHookOptions<GetUserAccountSettingsQuery, GetUserAccountSettingsQueryVariables>) {
+        return Apollo.useQuery<GetUserAccountSettingsQuery, GetUserAccountSettingsQueryVariables>(GetUserAccountSettingsDocument, baseOptions);
+      }
+export function useGetUserAccountSettingsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserAccountSettingsQuery, GetUserAccountSettingsQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserAccountSettingsQuery, GetUserAccountSettingsQueryVariables>(GetUserAccountSettingsDocument, baseOptions);
+        }
+export type GetUserAccountSettingsQueryHookResult = ReturnType<typeof useGetUserAccountSettingsQuery>;
+export type GetUserAccountSettingsLazyQueryHookResult = ReturnType<typeof useGetUserAccountSettingsLazyQuery>;
+export type GetUserAccountSettingsQueryResult = Apollo.QueryResult<GetUserAccountSettingsQuery, GetUserAccountSettingsQueryVariables>;
+export const GetUserStripeCustomerPortalLinkDocument = gql`
+    query getUserStripeCustomerPortalLink {
+  me {
+    stripeCustomerPortalLink
+  }
+}
+    `;
+
+/**
+ * __useGetUserStripeCustomerPortalLinkQuery__
+ *
+ * To run a query within a React component, call `useGetUserStripeCustomerPortalLinkQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetUserStripeCustomerPortalLinkQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetUserStripeCustomerPortalLinkQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetUserStripeCustomerPortalLinkQuery(baseOptions?: Apollo.QueryHookOptions<GetUserStripeCustomerPortalLinkQuery, GetUserStripeCustomerPortalLinkQueryVariables>) {
+        return Apollo.useQuery<GetUserStripeCustomerPortalLinkQuery, GetUserStripeCustomerPortalLinkQueryVariables>(GetUserStripeCustomerPortalLinkDocument, baseOptions);
+      }
+export function useGetUserStripeCustomerPortalLinkLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetUserStripeCustomerPortalLinkQuery, GetUserStripeCustomerPortalLinkQueryVariables>) {
+          return Apollo.useLazyQuery<GetUserStripeCustomerPortalLinkQuery, GetUserStripeCustomerPortalLinkQueryVariables>(GetUserStripeCustomerPortalLinkDocument, baseOptions);
+        }
+export type GetUserStripeCustomerPortalLinkQueryHookResult = ReturnType<typeof useGetUserStripeCustomerPortalLinkQuery>;
+export type GetUserStripeCustomerPortalLinkLazyQueryHookResult = ReturnType<typeof useGetUserStripeCustomerPortalLinkLazyQuery>;
+export type GetUserStripeCustomerPortalLinkQueryResult = Apollo.QueryResult<GetUserStripeCustomerPortalLinkQuery, GetUserStripeCustomerPortalLinkQueryVariables>;
+export const UpdateAccountSettingsDocument = gql`
+    mutation updateAccountSettings($input: UpdateUserInput!) {
+  updateAccountSettings(input: $input) {
+    ...UserFields
+  }
+}
+    ${UserFieldsFragmentDoc}`;
+export type UpdateAccountSettingsMutationFn = Apollo.MutationFunction<UpdateAccountSettingsMutation, UpdateAccountSettingsMutationVariables>;
+
+/**
+ * __useUpdateAccountSettingsMutation__
+ *
+ * To run a mutation, you first call `useUpdateAccountSettingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateAccountSettingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateAccountSettingsMutation, { data, loading, error }] = useUpdateAccountSettingsMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateAccountSettingsMutation(baseOptions?: Apollo.MutationHookOptions<UpdateAccountSettingsMutation, UpdateAccountSettingsMutationVariables>) {
+        return Apollo.useMutation<UpdateAccountSettingsMutation, UpdateAccountSettingsMutationVariables>(UpdateAccountSettingsDocument, baseOptions);
+      }
+export type UpdateAccountSettingsMutationHookResult = ReturnType<typeof useUpdateAccountSettingsMutation>;
+export type UpdateAccountSettingsMutationResult = Apollo.MutationResult<UpdateAccountSettingsMutation>;
+export type UpdateAccountSettingsMutationOptions = Apollo.BaseMutationOptions<UpdateAccountSettingsMutation, UpdateAccountSettingsMutationVariables>;

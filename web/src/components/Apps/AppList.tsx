@@ -3,6 +3,7 @@ import { Plus } from '@styled-icons/fa-solid';
 import { ApplicationFieldsFragment } from '../../helpers';
 import { Button } from '../Button';
 import { Link } from 'react-router-dom';
+import { routerPath } from '../../AppRouter';
 
 interface AppListProps {
   searchValue?: string;
@@ -27,7 +28,11 @@ const Topbar: React.FunctionComponent<AppListProps> = (props) => (
         />
       </div>
       <div className="col-md-auto">
-        <Button iconLeft={<Plus size="16" />} link="/app/new" text="New" />
+        <Button
+          iconLeft={<Plus size="16" />}
+          link={routerPath.newApp}
+          text="New"
+        />
       </div>
     </div>
   </div>

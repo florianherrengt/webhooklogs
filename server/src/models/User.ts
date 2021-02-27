@@ -1,6 +1,6 @@
 import { DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
-import { ObjectType, Field } from 'type-graphql';
+import { ObjectType, Field, InputType } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
 
 export interface UserAttributes {
@@ -8,9 +8,20 @@ export interface UserAttributes {
     username: string;
     email?: string;
     githubId?: string;
+    stripeCustomerId: string;
 }
 
-export interface UserCreationAttributes extends Omit<UserAttributes, 'id'> {}
+export interface UserCreationAttributes
+    extends Omit<UserAttributes, 'id' | 'isSubscribed'> {}
+
+@InputType()
+export class UpdateUserInput
+    implements Pick<UserAttributes, 'username' | 'email'> {
+    @Field((type) => String, { nullable: true })
+    username: string;
+    @Field((type) => String, { nullable: true })
+    email: string;
+}
 
 @ObjectType()
 export class User
@@ -24,6 +35,14 @@ export class User
     username: string;
     @Field({ nullable: true })
     githubId?: string;
+    @Field()
+    stripeCustomerPortalLink: string;
+    @Field()
+    stripeCustomerId: string;
+    @Field()
+    hasPaymentMethod: boolean;
+    @Field()
+    isSubscriptionValid: boolean;
 }
 
 User.init(
@@ -44,6 +63,10 @@ User.init(
         githubId: {
             type: DataTypes.STRING,
             allowNull: true,
+        },
+        stripeCustomerId: {
+            type: DataTypes.STRING,
+            allowNull: false,
         },
     },
     {

@@ -1,12 +1,43 @@
-fragment UserFragment on User {
+fragment UserFields on User {
   id
   username
   email
   githubId
 }
 
+fragment UserPaymentDetailsFields on User {
+  hasPaymentMethod
+  isSubscriptionValid
+}
+
 query Me {
   me {
-    ...UserFragment
+    ...UserFields
+  }
+}
+
+query getPaymentDetails {
+  me {
+    hasPaymentMethod
+    isSubscriptionValid
+  }
+}
+
+query getUserAccountSettings {
+  me {
+    ...UserFields
+    ...UserPaymentDetailsFields
+  }
+}
+
+query getUserStripeCustomerPortalLink {
+  me {
+    stripeCustomerPortalLink
+  }
+}
+
+mutation updateAccountSettings($input: UpdateUserInput!) {
+  updateAccountSettings(input: $input) {
+    ...UserFields
   }
 }

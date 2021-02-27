@@ -6,11 +6,19 @@ import {
     JWT_SECRET,
     PORT,
     DATABASE_URL,
-} from "./envVar";
+    STRIPE_KEY,
+    STRIPE_SECRET,
+    STRIPE_PRICE_ID,
+    DOMAIN,
+    HTTPS,
+} from './envVar';
 
 interface Config {
     app: {
         port: string;
+        domain: string;
+        https: boolean;
+        protocol: 'https' | 'http';
         jwt: {
             secret: string;
         };
@@ -28,11 +36,19 @@ interface Config {
             clientSecret: string;
         };
     };
+    stripe: {
+        key: string;
+        secret: string;
+        priceId: string;
+    };
 }
 
 export const config: Config = {
     app: {
         port: PORT,
+        https: HTTPS,
+        protocol: HTTPS ? 'https' : 'http',
+        domain: DOMAIN,
         jwt: {
             secret: JWT_SECRET,
         },
@@ -49,5 +65,10 @@ export const config: Config = {
             clientId: GITHUB_CLIENT_ID,
             clientSecret: GITHUB_CLIENT_SECRET,
         },
+    },
+    stripe: {
+        key: STRIPE_KEY,
+        secret: STRIPE_SECRET,
+        priceId: STRIPE_PRICE_ID,
     },
 };

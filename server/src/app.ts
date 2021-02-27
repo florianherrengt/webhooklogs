@@ -32,8 +32,12 @@ const createApp = async (): Promise<{
     app.use((request, _response, next) => {
         const [type, token] = request.headers.authorization?.split(' ') || [];
         if (type === 'Bearer' && typeof token === 'string') {
-            const jwtPayload = verifyJwt(token);
-            request.user = { id: jwtPayload.userId };
+            try {
+                const jwtPayload = verifyJwt(token);
+                request.user = { id: jwtPayload.userId };
+            } catch (error) {
+                console.error(error);
+            }
         }
         next();
     });

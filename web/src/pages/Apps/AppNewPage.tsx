@@ -5,6 +5,8 @@ import {
 } from '../../helpers';
 import { AppForm } from '../../components';
 import { useHistory } from 'react-router-dom';
+import { routerPath } from '../../AppRouter';
+import { NavbarContainer } from '../../containers';
 
 export const AppNewPage = () => {
   const [createApplication, { loading, error }] = useCreateApplicationMutation({
@@ -29,20 +31,24 @@ export const AppNewPage = () => {
   }
   return (
     <div>
-      <div className="border-bottom mb-4 pb-3">
-        <h1>Create a new application</h1>
-        <p>
-          An application receives data, store it and proxy it to your target.
-        </p>
+      <NavbarContainer />
+
+      <div className="mw-860 mt-4">
+        <div className="border-bottom mb-4 pb-3">
+          <h1>Create a new application</h1>
+          <p>
+            An application receives data, store it and proxy it to your target.
+          </p>
+        </div>
+        <AppForm
+          loading={loading}
+          onSubmit={(input) =>
+            createApplication({ variables: { input } }).then(() => {
+              history.push(routerPath.apps);
+            })
+          }
+        />
       </div>
-      <AppForm
-        loading={loading}
-        onSubmit={(input) =>
-          createApplication({ variables: { input } }).then(() => {
-            history.push('/apps');
-          })
-        }
-      />
     </div>
   );
 };

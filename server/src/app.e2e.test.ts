@@ -36,6 +36,7 @@ describe('App', () => {
         const user = await User.create({
             username: faker.internet.userName(),
             email: faker.internet.email(),
+            stripeCustomerId: 'stripe_customer_id',
         });
         const application = await Application.create({
             name: faker.hacker.noun(),

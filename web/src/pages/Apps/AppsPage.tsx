@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { AppContainer } from '../../AppRouter';
-import { AppList, Navbar } from '../../components';
+import { AppList } from '../../components';
+import { NavbarContainer, PaymentCheckerContainer } from '../../containers';
 import { useApplicationsQuery } from '../../helpers';
 
 export const AppsPage = () => {
@@ -14,14 +14,15 @@ export const AppsPage = () => {
   }
   return (
     <div>
-      <Navbar />
-      <AppContainer>
+      <NavbarContainer />
+      <PaymentCheckerContainer />
+      <div className="mw-860 mt-4">
         <AppList
           apps={data?.applications}
           onSearchChange={setSearchValue}
           searchValue={searchValue}
         />
-      </AppContainer>
+      </div>
     </div>
   );
 };

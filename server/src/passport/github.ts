@@ -5,6 +5,7 @@ import { Op } from 'sequelize';
 import { config } from '../config';
 import { createJwt } from '../helpers/createJwt';
 import { User, UserAttributes } from '../models';
+import { createUser } from './createUser';
 
 passport.use(
     new GitHubStrategy(
@@ -17,28 +18,35 @@ passport.use(
             _accessToken: string,
             _refreshToken: string,
             profile: Profile,
-            done: (error: Error | null, user: express.Request['user']) => void,
+            done: (
+                error: Error | null,
+                user: express.Request['user'] | null,
+            ) => void,
         ) {
-            const existingUser = await User.findOne({
-                where: { githubId: { [Op.eq]: profile.id } },
-            });
-            if (existingUser) {
-                return done(null, existingUser.toJSON() as UserAttributes);
-            }
-            const email = profile.emails?.length
-                ? profile.emails[0].value
-                : undefined;
-            const user = await User.create({
-                username:
-                    profile.username ||
-                    profile.displayName ||
-                    email?.split('@')[0] ||
-                    'anonymous',
-                email,
-                githubId: profile.id,
-            });
+            try {
+                const existingUser = await User.findOne({
+                    where: { githubId: { [Op.eq]: profile.id } },
+                });
+                if (existingUser) {
+                    return done(null, existingUser.toJSON() as UserAttributes);
+                }
+                const email = profile.emails?.length
+                    ? profile.emails[0].value
+                    : undefined;
+                const user = await createUser({
+                    username:
+                        profile.username ||
+                        profile.displayName ||
+                        email?.split('@')[0] ||
+                        'anonymous',
+                    email,
+                    githubId: profile.id,
+                });
 
-            done(null, user.toJSON() as UserAttributes);
+                done(null, user.toJSON() as UserAttributes);
+            } catch (error) {
+                done(error, null);
+            }
         },
     ),
 );

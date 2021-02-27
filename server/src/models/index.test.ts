@@ -12,6 +12,7 @@ describe('sequelize models', () => {
             username: faker.internet.userName(),
             email: faker.internet.email(),
             githubId: 'github_id',
+            stripeCustomerId: 'stripe_customer_id',
         });
         const application = await Application.create({
             name: faker.random.word(),

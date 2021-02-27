@@ -2,23 +2,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import classNames from 'classnames';
+import { Color } from '../types';
 
-interface ButtonProps {
+export interface ButtonProps {
   iconLeft?: React.ReactElement;
   text?: string;
   link?: string;
   disabled?: boolean;
   outline?: boolean;
   external?: boolean;
-  color?:
-    | 'primary'
-    | 'secondary'
-    | 'success'
-    | 'danger'
-    | 'warning'
-    | 'info'
-    | 'light'
-    | 'dark';
+  color?: Color;
 }
 
 const IconLeft = styled.span`
