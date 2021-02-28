@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouteMatch, useLocation, useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { config } from '../../config';
+import { routerPath } from '../../AppRouter';
 
 export const LoginCallbackPage = () => {
   const [loading, setLoading] = useState(false);
@@ -26,7 +27,7 @@ export const LoginCallbackPage = () => {
           setError(`Something went wrong. No token returned: ${data}`);
         }
         window.localStorage.setItem('token', data.token);
-        history.push('/');
+        window.location.replace(routerPath.apps);
       } catch (e) {
         setError(e.message);
       }

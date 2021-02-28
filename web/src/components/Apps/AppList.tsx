@@ -13,7 +13,7 @@ interface AppListProps {
 
 const Topbar: React.FunctionComponent<AppListProps> = (props) => (
   <div>
-    <h1>Applications</h1>
+    <h1 className="mb-4">Applications</h1>
     <div className="row">
       <div className="col-sm input-group ">
         <input

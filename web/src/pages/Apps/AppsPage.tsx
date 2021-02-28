@@ -16,7 +16,7 @@ export const AppsPage = () => {
     <div>
       <NavbarContainer />
       <PaymentCheckerContainer />
-      <div className="mw-860 mt-4">
+      <div className="container mt-4">
         <AppList
           apps={data?.applications}
           onSearchChange={setSearchValue}

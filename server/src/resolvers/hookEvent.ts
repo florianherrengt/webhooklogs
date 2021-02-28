@@ -103,7 +103,7 @@ export class HookEventResolver {
         });
         const whereQuery = JSON.parse(JSON.stringify(where));
         const order: Order = [['createdAt', 'desc']];
-        const limit = cursor.limit > 100 ? 100 : cursor.limit;
+        const limit = cursor.limit >= 100 ? 100 : cursor.limit;
 
         const cursorRow = cursor?.after
             ? await HookEvent.findByPk(cursor.after)
@@ -124,7 +124,7 @@ export class HookEventResolver {
                         ? {
                               id: { ne: cursorRow.id },
                               createdAt: {
-                                  gt: cursorRow.createdAt,
+                                  lt: cursorRow.createdAt,
                               },
                           }
                         : null,
@@ -149,13 +149,14 @@ export class HookEventResolver {
                 [Op.and]: [
                     {
                         createdAt: {
-                            gt: items[0].createdAt,
+                            lt: items[items.length - 1].createdAt,
                         },
                     },
-                    { id: { ne: items[0].id } },
+                    { id: { ne: items[items.length - 1].id } },
                 ],
             },
         });
+
         const mappedItems: HookEventGraphqlAttributes[] = items.map(
             this.formatHookEvent,
         );

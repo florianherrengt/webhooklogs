@@ -15,7 +15,7 @@ export const AccountSettings: React.FunctionComponent<AccountSettingsProps> = (
       <NavbarContainer />
       <div className="container mt-4">
         <div className="border-bottom mb-4 pb-3">
-          <h1>Account setting</h1>
+          <h1>Account settings</h1>
           <p>Manage your account and payment methods.</p>
         </div>
         <div>
