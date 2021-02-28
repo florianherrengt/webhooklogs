@@ -1,6 +1,6 @@
 import React from 'react';
 import { routerPath } from '../AppRouter';
-import { Alert, Button } from '../components';
+import { Alert } from '../components';
 import { useGetPaymentDetailsQuery } from '../helpers';
 
 interface PaymentCheckerContainerProps {}

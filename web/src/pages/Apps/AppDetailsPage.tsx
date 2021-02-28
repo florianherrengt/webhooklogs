@@ -27,7 +27,6 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
 ) => {
   const { id: appId } = useParams<{ id: string }>();
 
-  console.log('re-render AppDetailsPage');
   const newHookEventSubscriptionResults = useNewHookEventSubscription({
     variables: { applicationId: appId },
   });

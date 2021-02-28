@@ -4,11 +4,9 @@ import { routerPath } from '../../AppRouter';
 import { Loading } from '../../components';
 import { AccountSettings } from '../../components/User/AccountSettings';
 import {
-  useMeQuery,
   useGetUserAccountSettingsQuery,
-  useGetPaymentDetailsQuery,
-  useUpdateAccountSettingsMutation,
   useGetUserStripeCustomerPortalLinkLazyQuery,
+  useUpdateAccountSettingsMutation,
 } from '../../helpers';
 
 export const SettingsPage: React.FunctionComponent = () => {
