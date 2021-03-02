@@ -5,3 +5,4 @@ db_data
 cockroach-data
 deployment/config
 .dockerbuild
+*.db

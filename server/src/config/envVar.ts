@@ -27,4 +27,8 @@ if (!process.env.DOMAIN) {
     throw new Error('DOMAIN env var required');
 }
 export const DOMAIN = process.env.DOMAIN;
+if (!process.env.REDIS_URL) {
+    throw new Error('REDIS_URL env var required');
+}
+export const REDIS_URL = process.env.REDIS_URL;
 export const HTTPS = process.env.HTTPS === 'true';

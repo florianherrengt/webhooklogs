@@ -11,6 +11,7 @@ import {
     STRIPE_PRICE_ID,
     DOMAIN,
     HTTPS,
+    REDIS_URL,
 } from './envVar';
 
 interface Config {
@@ -24,6 +25,9 @@ interface Config {
         };
     };
     database: {
+        url: string;
+    };
+    redis: {
         url: string;
     };
     hasura: {
@@ -55,6 +59,9 @@ export const config: Config = {
     },
     database: {
         url: DATABASE_URL,
+    },
+    redis: {
+        url: REDIS_URL,
     },
     hasura: {
         url: HASURA_URL,

@@ -14,6 +14,7 @@ import axios from 'axios';
 import { createGraphqlContext } from './graphqlContext';
 import { verifyJwt } from './helpers/createJwt';
 import { Sequelize } from 'sequelize/types';
+import path from 'path';
 
 type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -111,6 +112,12 @@ const createApp = async (): Promise<{
 
     app.get('/healthz', (_, response) => {
         response.json({ ok: 1 });
+    });
+
+    app.use(express.static(path.join(__dirname, '../../../web/build')));
+
+    app.get('/', function (req, res) {
+        res.sendFile(path.join(__dirname, '../../../web/build', 'index.html'));
     });
     return { app, apolloServer, sequelize };
 };

@@ -1,2 +1,6 @@
 import { RedisPubSub } from 'graphql-redis-subscriptions';
-export const pubSub = new RedisPubSub();
+import { redisClient } from './redis';
+export const pubSub = new RedisPubSub({
+    publisher: redisClient,
+    subscriber: redisClient,
+});

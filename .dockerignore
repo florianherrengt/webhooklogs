@@ -1,0 +1,6 @@
+**/node_modules
+**/.build
+**/.env
+**/db_data
+db_data
+.env
