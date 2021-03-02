@@ -116,7 +116,7 @@ const createApp = async (): Promise<{
 
     app.use(express.static(path.join(__dirname, '../../../web/build')));
 
-    app.get('/', function (req, res) {
+    app.get('*', function (req, res) {
         res.sendFile(path.join(__dirname, '../../../web/build', 'index.html'));
     });
     return { app, apolloServer, sequelize };
