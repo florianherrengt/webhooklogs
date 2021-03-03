@@ -42,12 +42,14 @@ export const AppForm = (props: AppFormProps) => {
         onSubmit={handleSubmit(props.onSubmit)}
       >
         <div className="border-bottom mb-4 pb-3">
-          <div className="mb-3">
-            <label htmlFor="endpoint" className="form-label">
-              <b>Endpoint</b>
-            </label>
-            <div id="endpoint">{appWebhookUrl}</div>
-          </div>
+          {props.application ? (
+            <div className="mb-3">
+              <label htmlFor="endpoint" className="form-label">
+                <b>Endpoint</b>
+              </label>
+              <div id="endpoint">{appWebhookUrl}</div>
+            </div>
+          ) : null}
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               <b>Name</b>

@@ -56,7 +56,7 @@ export const AppList: React.FunctionComponent<AppListProps> = (props) => {
               <h6>
                 <Link to={`/app/${app.id}`}>{app.name}</Link>
               </h6>
-              <p>{app.targetUrl}</p>
+              <p>{app.targetUrl || 'No target'}</p>
             </li>
           ))}
       </ul>
