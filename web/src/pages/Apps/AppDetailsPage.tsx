@@ -12,6 +12,7 @@ import {
 import { HookEventDetails } from '../../components/HookEvents/HookEventDetails';
 import { NavbarContainer } from '../../containers';
 import { useParams } from 'react-router-dom';
+import { config } from '../../config';
 
 interface AppDetailsPageProps {}
 
@@ -75,12 +76,13 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   }
 
   const hookEvents = hookEventsResults.data?.hookEvents.items || [];
+  // const appWebhookUrl = `${config.api.protocol}://${config.api.url}/webhook/${applicationByIdResults.data?.applicationById?.id}`;
   return (
     <div>
       <NavbarContainer />
       <div className="container-xxl mt-4">
-        <nav className="navbar">
-          <div className="container-fluid p-0 border-bottom mb-3">
+        <nav className="navbar border-bottom mb-3">
+          <div className="container-fluid p-0">
             <h1 className="navbar-text">
               {applicationByIdResults.data?.applicationById.name}
             </h1>
@@ -97,6 +99,7 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
         </nav>
 
         <HookEventsList
+          application={applicationByIdResults.data?.applicationById}
           hookEvents={hookEvents}
           selectedHookEvent={selectedHookEvent}
           onRowClick={(clickHookevent) =>

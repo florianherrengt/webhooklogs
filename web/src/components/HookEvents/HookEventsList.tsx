@@ -1,11 +1,13 @@
 import React from 'react';
 import { Circle } from '@styled-icons/fa-solid';
 import classNames from 'classnames';
-import { HookEventsFragmentFragment } from '../../helpers';
+import { Application, HookEventsFragmentFragment } from '../../helpers';
 import { Button } from '..';
 import { HookEventDetails } from './HookEventDetails';
+import { config } from '../../config';
 
 interface HookEventsListProps {
+  application?: Pick<Application, 'id'>;
   hookEvents?: HookEventsFragmentFragment[];
   selectedHookEvent?: HookEventsFragmentFragment;
   onRowClick?: (hookEvent: HookEventsFragmentFragment) => void;
@@ -17,7 +19,24 @@ export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
   props,
 ) => {
   const { hookEvents = [] } = props;
+  const appWebhookUrl = `${config.api.protocol}://${config.api.url}/webhook/${props.application?.id}`;
+  if (!hookEvents.length) {
+    return (
+      <div>
+        <p>
+          This application has not received any events yet. Try to send a curl
+          request:
+        </p>
 
+        <p className="font-monospace bg-light border p-2">
+          {'curl '}
+          {'--header "Content-Type: application/json" '}
+          {'--data \'{"hello":"world"}\' '}
+          {appWebhookUrl}
+        </p>
+      </div>
+    );
+  }
   return (
     <div>
       <ul className="list-group list-group-flush font-monospace mb-4">

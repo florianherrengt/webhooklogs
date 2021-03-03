@@ -2,10 +2,11 @@ import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../Button';
 import { Application } from '../../helpers';
+import { config } from '../../config';
 
 interface FormData {
   name: string;
-  targetUrl: string;
+  targetUrl?: string;
 }
 
 interface AppFormProps {
@@ -33,7 +34,7 @@ const DangerZone: React.FunctionComponent<AppFormProps> = (props) => (
 
 export const AppForm = (props: AppFormProps) => {
   const { register, handleSubmit, errors } = useForm<FormData>();
-
+  const appWebhookUrl = `${config.api.protocol}://${config.api.url}/webhook/${props.application?.id}`;
   return (
     <div>
       <form
@@ -41,11 +42,17 @@ export const AppForm = (props: AppFormProps) => {
         onSubmit={handleSubmit(props.onSubmit)}
       >
         <div className="border-bottom mb-4 pb-3">
-          <div className="mb-3 row">
-            <label htmlFor="name" className="col-sm-1 col-form-label">
+          <div className="mb-3">
+            <label htmlFor="endpoint" className="form-label">
+              <b>Endpoint</b>
+            </label>
+            <div id="endpoint">{appWebhookUrl}</div>
+          </div>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
               <b>Name</b>
             </label>
-            <div className="col-sm-11">
+            <div>
               <input
                 ref={register({ required: true, maxLength: 60 })}
                 type="text"
@@ -60,21 +67,20 @@ export const AppForm = (props: AppFormProps) => {
               {errors.name?.type === 'maxLength' && <p>Too long</p>}
             </div>
           </div>
-          <div className="mb-3 row">
-            <label htmlFor="targetUrl" className="col-sm-1 col-form-label">
+          <div className="mb-3">
+            <label htmlFor="targetUrl" className="form-label">
               <b>Target</b>
             </label>
-            <div className="col-sm-11">
+            <div>
               <input
-                ref={register({ required: true })}
+                ref={register({ required: false })}
                 type="url"
                 className="form-control"
-                defaultValue={props.application?.targetUrl}
+                defaultValue={props.application?.targetUrl || ''}
                 id="targetUrl"
                 name="targetUrl"
                 placeholder="https://your-api-endpoint.com"
                 disabled={props.loading}
-                required
               />
             </div>
           </div>

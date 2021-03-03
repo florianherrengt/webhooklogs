@@ -1,6 +1,7 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
 import { AppForm } from '../../components';
+import { config } from '../../config';
 import { NavbarContainer } from '../../containers';
 import {
   useApplicationByIdQuery,

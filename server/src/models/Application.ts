@@ -6,7 +6,7 @@ import { v4 as uuid } from 'uuid';
 export interface ApplicationAttributes {
     id: string;
     name: string;
-    targetUrl: string;
+    targetUrl?: string;
     userId: string;
 }
 
@@ -18,19 +18,19 @@ export class CreateApplicationInput
     implements Omit<ApplicationCreationAttributes, 'userId'> {
     @Field((type) => String)
     name: string;
-    @Field((type) => String)
-    targetUrl: string;
+    @Field((type) => String, { nullable: true })
+    targetUrl?: string;
 }
 
 @InputType()
 export class UpdateApplicationInput
-    implements Omit<ApplicationAttributes, 'userId'> {
+    implements Partial<Omit<ApplicationAttributes, 'userId'>> {
     @Field((type) => String)
     id: string;
-    @Field((type) => String)
-    name: string;
-    @Field((type) => String)
-    targetUrl: string;
+    @Field((type) => String, { nullable: true })
+    name?: string;
+    @Field((type) => String, { nullable: true })
+    targetUrl?: string;
 }
 
 @ObjectType()
@@ -41,8 +41,8 @@ export class Application
     id: string;
     @Field((type) => String)
     name: string;
-    @Field((type) => String)
-    targetUrl: string;
+    @Field((type) => String, { nullable: true })
+    targetUrl?: string;
     @Field((type) => String)
     userId: string;
 }
@@ -60,7 +60,7 @@ Application.init(
         },
         targetUrl: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         userId: {
             type: DataTypes.UUID,

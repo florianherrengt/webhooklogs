@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { User } from '../../helpers';
+import { ExchangeAlt } from '@styled-icons/fa-solid';
 
 interface NavbarProps {
   me?: Pick<User, 'username'> | null;
@@ -11,7 +12,7 @@ export const Navbar: React.FunctionComponent<NavbarProps> = (props) => {
     <nav className="navbar bg-light">
       <div className="container-fluid">
         <Link className="navbar-brand h1 text-decoration-none text-dark" to="/">
-          Hookhub
+          WebhookLogs
         </Link>
         {props.me ? (
           <div className="dropdown">

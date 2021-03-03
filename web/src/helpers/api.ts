@@ -60,7 +60,7 @@ export type Application = {
   __typename?: 'Application';
   id: Scalars['String'];
   name: Scalars['String'];
-  targetUrl: Scalars['String'];
+  targetUrl?: Maybe<Scalars['String']>;
   userId: Scalars['String'];
 };
 
@@ -141,13 +141,13 @@ export type UpdateUserInput = {
 
 export type CreateApplicationInput = {
   name: Scalars['String'];
-  targetUrl: Scalars['String'];
+  targetUrl?: Maybe<Scalars['String']>;
 };
 
 export type UpdateApplicationInput = {
   id: Scalars['String'];
-  name: Scalars['String'];
-  targetUrl: Scalars['String'];
+  name?: Maybe<Scalars['String']>;
+  targetUrl?: Maybe<Scalars['String']>;
 };
 
 export type Subscription = {

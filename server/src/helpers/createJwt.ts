@@ -1,18 +1,18 @@
-import jwt from "jsonwebtoken";
-import { config } from "../config";
+import jwt from 'jsonwebtoken';
+import { config } from '../config';
 
 interface JwtPayload {
     userId: string;
 }
 
 const jwtOptions = {
-    issuer: "hookhub.com",
-    audience: "web",
+    issuer: 'webhooklogs.com',
+    audience: 'web',
 };
 
 export const createJwt = (payload: JwtPayload) =>
     jwt.sign(payload, config.app.jwt.secret, {
-        expiresIn: "30 days",
+        expiresIn: '30 days',
         ...jwtOptions,
     });
 

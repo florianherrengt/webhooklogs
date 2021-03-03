@@ -55,9 +55,7 @@ const createApp = async (): Promise<{
             try {
                 const jwtPayload = verifyJwt(token);
                 request.user = { id: jwtPayload.userId };
-            } catch (error) {
-                console.error(error);
-            }
+            } catch (error) {}
         }
         next();
     });
@@ -108,6 +106,9 @@ const createApp = async (): Promise<{
                 JSON.stringify(hookEvent.toJSON()),
             );
 
+            if (!application.targetUrl) {
+                return response.json({ hookEvent });
+            }
             const targetUrl = application.targetUrl + request.path;
             const { host } = url.parse(application.targetUrl);
             try {
