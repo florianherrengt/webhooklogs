@@ -6,7 +6,7 @@ import faker from 'faker';
 import express from 'express';
 import axios from 'axios';
 
-describe('App', () => {
+describe.skip('App', () => {
     const appPort = faker.random.number({ min: 4000, max: 5000 });
     const testAppPort = faker.random.number({ min: 5001, max: 6000 });
     const appUrl = `http://localhost:${appPort}`;

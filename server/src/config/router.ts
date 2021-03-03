@@ -5,7 +5,7 @@ const configRouter = Router();
 
 configRouter.get('/api/config', (request, response) => {
     if (request.headers['admin-secret'] !== config.app.admin.secret) {
-        return response.status(500).json({
+        return response.status(401).json({
             error: 'invalid secret',
             secret: request.headers['admin-secret'],
         });

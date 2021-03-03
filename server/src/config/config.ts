@@ -13,6 +13,7 @@ import {
     HTTPS,
     REDIS_URL,
     ADMIN_SECRET,
+    SERVE_STATIC_FILES,
 } from './envVar';
 
 interface Config {
@@ -26,6 +27,7 @@ interface Config {
         admin: {
             secret: string;
         };
+        serveStaticFiles: boolean;
     };
     database: {
         url: string;
@@ -61,6 +63,7 @@ export const config: Config = {
         admin: {
             secret: ADMIN_SECRET,
         },
+        serveStaticFiles: SERVE_STATIC_FILES,
     },
     database: {
         url: DATABASE_URL,

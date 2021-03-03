@@ -15,7 +15,7 @@ import { createGraphqlContext } from './graphqlContext';
 import { verifyJwt } from './helpers/createJwt';
 import { Sequelize } from 'sequelize/types';
 import path from 'path';
-import { configRouter } from './config';
+import { config, configRouter } from './config';
 import url from 'url';
 import { redisClient } from './redis';
 import { GraphQLSchema } from 'graphql';
@@ -159,11 +159,14 @@ const createApp = async (): Promise<{
         },
     );
 
-    app.use(express.static(path.join(__dirname, '../../../web/build')));
-
-    app.get('*', function (req, res) {
-        res.sendFile(path.join(__dirname, '../../../web/build', 'index.html'));
-    });
+    if (config.app.serveStaticFiles) {
+        app.use(express.static(path.join(__dirname, '../../../web/build')));
+        app.get('*', function (req, res) {
+            res.sendFile(
+                path.join(__dirname, '../../../web/build', 'index.html'),
+            );
+        });
+    }
     return { app, apolloServer, sequelize, schema };
 };
 export { createApp };

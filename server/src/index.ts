@@ -9,7 +9,7 @@ import { buildSchema } from 'type-graphql';
 import { config } from './config';
 
 (async () => {
-    const { app, apolloServer, sequelize, schema } = await createApp();
+    const { app, apolloServer, sequelize } = await createApp();
 
     const httpServer = createServer(app);
     apolloServer.installSubscriptionHandlers(httpServer);

@@ -37,3 +37,8 @@ if (!process.env.ADMIN_SECRET) {
     throw new Error('ADMIN_SECRET env var required');
 }
 export const ADMIN_SECRET = process.env.ADMIN_SECRET;
+
+if (!process.env.SERVE_STATIC_FILES) {
+    throw new Error('SERVE_STATIC_FILES env var required');
+}
+export const SERVE_STATIC_FILES = process.env.SERVE_STATIC_FILES === 'true';
