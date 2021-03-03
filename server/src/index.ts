@@ -11,14 +11,14 @@ import { config } from './config';
 (async () => {
     const { app, apolloServer, sequelize } = await createApp();
 
-    const server = createServer(app);
-    apolloServer.installSubscriptionHandlers(server);
-    server.listen(config.app.port, () => {
+    const httpServer = createServer(app);
+    apolloServer.installSubscriptionHandlers(httpServer);
+    httpServer.listen(config.app.port, () => {
         console.log(`server ready: http://localhost:${config.app.port}`);
     });
 
     process.on('SIGTERM', () => {
-        server.close(async () => {
+        httpServer.close(async () => {
             console.log('Http server closed.');
             await sequelize.close();
             process.exit(0);

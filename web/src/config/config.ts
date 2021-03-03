@@ -25,11 +25,11 @@ if (!['ws', 'wss'].includes(wsProtocol)) {
 
 export const config: Config = {
   api: {
-    url: process.env.REACT_APP_API_URL || 'localhost:3001',
+    url: process.env.REACT_APP_API_URL || 'localhost:3001/api',
     protocol,
   },
   ws: {
-    url: process.env.REACT_APP_API_URL || 'localhost:3001',
+    url: process.env.REACT_APP_API_URL || 'localhost:3001/api',
     protocol: wsProtocol,
   },
 };

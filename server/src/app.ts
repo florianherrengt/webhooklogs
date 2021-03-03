@@ -16,6 +16,9 @@ import { verifyJwt } from './helpers/createJwt';
 import { Sequelize } from 'sequelize/types';
 import path from 'path';
 import { configRouter } from './config';
+import url from 'url';
+import { redisClient } from './redis';
+import { GraphQLSchema } from 'graphql';
 
 type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -26,14 +29,24 @@ const createApp = async (): Promise<{
     app: express.Express;
     apolloServer: ApolloServer;
     sequelize: Sequelize;
+    schema: GraphQLSchema;
 }> => {
     const app = express();
     app.use(cors());
     await sequelize.sync();
 
     app.get('/api/healthz', async (_, response) => {
-        await sequelize.authenticate();
-        response.json({ ok: 1 });
+        try {
+            await sequelize.authenticate();
+            await new Promise((resolve, reject) =>
+                redisClient.ping((error, result) =>
+                    error ? reject(error) : resolve(result),
+                ),
+            );
+            response.json({ ok: 1 });
+        } catch (error) {
+            response.status(500).send(error);
+        }
     });
     app.use(configRouter);
     app.use((request, _response, next) => {
@@ -54,6 +67,7 @@ const createApp = async (): Promise<{
     });
     const apolloServer = new ApolloServer({
         schema,
+        subscriptions: { path: '/api/graphql' },
         context: createGraphqlContext,
     });
 
@@ -89,35 +103,58 @@ const createApp = async (): Promise<{
                 headers: request.headers,
                 applicationId: appId,
             });
+            await pubSub.publish(
+                'NEW_HOOK_EVENT',
+                JSON.stringify(hookEvent.toJSON()),
+            );
 
+            const targetUrl = application.targetUrl + request.path;
+            const { host } = url.parse(application.targetUrl);
             try {
                 const result = await {
-                    GET: () => axios.get(application.targetUrl, { headers }),
+                    GET: () =>
+                        axios.get(targetUrl, {
+                            headers: {
+                                ...headers,
+                                host,
+                            },
+                        }),
                     POST: () =>
-                        axios.post(application.targetUrl, body, { headers }),
+                        axios.post(targetUrl, body, {
+                            headers: {
+                                ...headers,
+                                host,
+                            },
+                        }),
                     PUT: () =>
-                        axios.put(application.targetUrl, body, { headers }),
+                        axios.put(targetUrl, body, {
+                            headers: {
+                                ...headers,
+                                host,
+                            },
+                        }),
                     DELETE: () =>
-                        axios.delete(application.targetUrl, { headers }),
+                        axios.delete(targetUrl, {
+                            headers: {
+                                ...headers,
+                                host,
+                            },
+                        }),
                 }[request.method]();
                 await TargetResponse.create({
                     ...result,
                     hookEventId: hookEvent.id,
                 });
-                response.status(result.status).send(result.data);
+                return response.status(result.status).send(result.data);
             } catch (error) {
                 await TargetResponse.create({
                     status: 500,
-                    data: {},
+                    data: error,
                     headers: {},
                     hookEventId: hookEvent.id,
                 });
-                response.sendStatus(500);
+                return response.status(500).send(error);
             }
-            await pubSub.publish(
-                'NEW_HOOK_EVENT',
-                JSON.stringify(hookEvent.toJSON()),
-            );
         },
     );
 
@@ -126,6 +163,6 @@ const createApp = async (): Promise<{
     app.get('*', function (req, res) {
         res.sendFile(path.join(__dirname, '../../../web/build', 'index.html'));
     });
-    return { app, apolloServer, sequelize };
+    return { app, apolloServer, sequelize, schema };
 };
 export { createApp };
