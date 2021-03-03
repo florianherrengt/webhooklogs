@@ -9,12 +9,23 @@ import { buildSchema } from 'type-graphql';
 import { config } from './config';
 
 (async () => {
-    const { app, apolloServer, sequelize } = await createApp();
+    const { app, apolloServer, sequelize, schema } = await createApp();
 
     const httpServer = createServer(app);
     apolloServer.installSubscriptionHandlers(httpServer);
     httpServer.listen(config.app.port, () => {
         console.log(`server ready: http://localhost:${config.app.port}`);
+        // SubscriptionServer.create(
+        //     {
+        //         schema,
+        //         execute,
+        //         subscribe,
+        //     },
+        //     {
+        //         server: httpServer,
+        //         path: '/api/graphql',
+        //     },
+        // );
     });
 
     process.on('SIGTERM', () => {
