@@ -7,7 +7,7 @@ import { HookEventDetails } from './HookEventDetails';
 import { config } from '../../config';
 
 interface HookEventsListProps {
-  application?: Pick<Application, 'id'>;
+  application?: Pick<Application, 'id' | 'targetUrl'>;
   hookEvents?: HookEventsFragmentFragment[];
   selectedHookEvent?: HookEventsFragmentFragment;
   onRowClick?: (hookEvent: HookEventsFragmentFragment) => void;
@@ -83,7 +83,10 @@ export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
               </li>
               {isSelected ? (
                 <div className="mt-4 mb-4">
-                  <HookEventDetails hookEvent={hookEvent} />
+                  <HookEventDetails
+                    application={props.application}
+                    hookEvent={hookEvent}
+                  />
                 </div>
               ) : null}
             </div>

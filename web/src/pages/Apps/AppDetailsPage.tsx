@@ -76,7 +76,7 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   }
 
   const hookEvents = hookEventsResults.data?.hookEvents.items || [];
-  // const appWebhookUrl = `${config.api.protocol}://${config.api.url}/webhook/${applicationByIdResults.data?.applicationById?.id}`;
+
   return (
     <div>
       <NavbarContainer />

@@ -2,9 +2,10 @@ import React from 'react';
 import classNames from 'classnames';
 import ReactJson from 'react-json-view';
 import { useHistory } from 'react-router-dom';
-import { HookEventsFragmentFragment } from '../../helpers';
+import { Application, HookEventsFragmentFragment } from '../../helpers';
 
 interface HookEventDetailsProps {
+  application?: Pick<Application, 'targetUrl'>;
   hookEvent?: HookEventsFragmentFragment;
 }
 
@@ -13,12 +14,12 @@ const PayloadDetails: React.FunctionComponent<HookEventDetailsProps> = (
 ) => {
   return (
     <div className="p-1 overflow-scroll">
-      {props.hookEvent?.targetResponse?.data ? (
+      {props.hookEvent ? (
         <ReactJson
           name={false}
           displayDataTypes={false}
           enableClipboard={false}
-          src={JSON.parse(props.hookEvent?.body)}
+          src={JSON.parse(props.hookEvent.body)}
         />
       ) : null}
     </div>
@@ -30,7 +31,7 @@ const HeadersDetails: React.FunctionComponent<HookEventDetailsProps> = (
 ) => {
   return (
     <div className="p-1 overflow-scroll">
-      {props.hookEvent?.targetResponse?.headers ? (
+      {props.hookEvent ? (
         <ReactJson
           name={false}
           displayDataTypes={false}
@@ -47,14 +48,20 @@ const ResponseDetails: React.FunctionComponent<HookEventDetailsProps> = (
 ) => {
   return (
     <div className="p-1 overflow-scroll">
-      {props.hookEvent?.targetResponse?.headers ? (
+      {props.hookEvent?.targetResponse?.data ? (
         <ReactJson
           name={false}
           displayDataTypes={false}
           enableClipboard={false}
           src={JSON.parse(props.hookEvent?.targetResponse?.data)}
         />
-      ) : null}
+      ) : (
+        <div>
+          {!props.application?.targetUrl
+            ? 'No target URL set for this application. You can change this in the settings.'
+            : 'No response'}
+        </div>
+      )}
     </div>
   );
 };
