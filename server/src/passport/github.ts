@@ -12,7 +12,7 @@ passport.use(
         {
             clientID: config.passport.github.clientId,
             clientSecret: config.passport.github.clientSecret,
-            callbackURL: 'http://localhost:3000/auth/github/callback',
+            callbackURL: `${config.app.protocol}://${config.app.domain}/auth/github/callback`,
         },
         async function (
             _accessToken: string,

@@ -19,14 +19,14 @@ const authorization =
     : '';
 
 const httpLink = new HttpLink({
-  uri: `http://${config.api.url}/graphql`,
+  uri: `${config.api.protocol}://${config.api.url}/graphql`,
   headers: {
     authorization,
   },
 });
 
 const wsLink = new WebSocketLink({
-  uri: `ws://${config.api.url}/graphql`,
+  uri: `${config.ws.protocol}://${config.api.url}/graphql`,
   options: {
     reconnect: true,
     connectionParams: {

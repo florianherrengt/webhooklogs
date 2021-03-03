@@ -15,6 +15,7 @@ import { createGraphqlContext } from './graphqlContext';
 import { verifyJwt } from './helpers/createJwt';
 import { Sequelize } from 'sequelize/types';
 import path from 'path';
+import { configRouter } from './config';
 
 type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -30,6 +31,11 @@ const createApp = async (): Promise<{
     app.use(cors());
     await sequelize.sync();
 
+    app.get('/api/healthz', async (_, response) => {
+        await sequelize.authenticate();
+        response.json({ ok: 1 });
+    });
+    app.use(configRouter);
     app.use((request, _response, next) => {
         const [type, token] = request.headers.authorization?.split(' ') || [];
         if (type === 'Bearer' && typeof token === 'string') {
@@ -51,68 +57,69 @@ const createApp = async (): Promise<{
         context: createGraphqlContext,
     });
 
-    apolloServer.applyMiddleware({ app });
+    app.use('/api/graphql', apolloServer.getMiddleware({ path: '/' }));
 
-    app.use('/auth', passportRouter);
+    app.use('/api/auth', passportRouter);
 
-    app.use('/webhook/:appId', bodyParser.json(), async (request, response) => {
-        const {
-            // method,
-            headers,
-            body,
-            params: { appId },
-        } = request;
-        if (!isSupportedMethod(request.method)) {
-            return response
-                .status(501)
-                .json({ error: `${request.method} not supported yet` });
-        }
-        console.log(request.path);
-        const application = await Application.findByPk(appId);
-        if (!application) {
-            return response
-                .status(404)
-                .json({ error: `no application with id: ${appId} found.` });
-        }
+    app.use(
+        '/api/webhook/:appId',
+        bodyParser.json(),
+        async (request, response) => {
+            const {
+                // method,
+                headers,
+                body,
+                params: { appId },
+            } = request;
+            if (!isSupportedMethod(request.method)) {
+                return response
+                    .status(501)
+                    .json({ error: `${request.method} not supported yet` });
+            }
+            const application = await Application.findByPk(appId);
+            if (!application) {
+                return response
+                    .status(404)
+                    .json({ error: `no application with id: ${appId} found.` });
+            }
 
-        const hookEvent = await HookEvent.create({
-            ...request,
-            path: request.path || '/',
-            headers: request.headers,
-            applicationId: appId,
-        });
-
-        try {
-            const result = await {
-                GET: () => axios.get(application.targetUrl, { headers }),
-                POST: () =>
-                    axios.post(application.targetUrl, body, { headers }),
-                PUT: () => axios.put(application.targetUrl, body, { headers }),
-                DELETE: () => axios.delete(application.targetUrl, { headers }),
-            }[request.method]();
-            await TargetResponse.create({
-                ...result,
-                hookEventId: hookEvent.id,
+            const hookEvent = await HookEvent.create({
+                ...request,
+                path: request.path || '/',
+                headers: request.headers,
+                applicationId: appId,
             });
-            response.status(result.status).send(result.data);
-        } catch (error) {
-            await TargetResponse.create({
-                status: 500,
-                data: {},
-                headers: {},
-                hookEventId: hookEvent.id,
-            });
-            response.sendStatus(500);
-        }
-        await pubSub.publish(
-            'NEW_HOOK_EVENT',
-            JSON.stringify(hookEvent.toJSON()),
-        );
-    });
 
-    app.get('/healthz', (_, response) => {
-        response.json({ ok: 1 });
-    });
+            try {
+                const result = await {
+                    GET: () => axios.get(application.targetUrl, { headers }),
+                    POST: () =>
+                        axios.post(application.targetUrl, body, { headers }),
+                    PUT: () =>
+                        axios.put(application.targetUrl, body, { headers }),
+                    DELETE: () =>
+                        axios.delete(application.targetUrl, { headers }),
+                }[request.method]();
+                await TargetResponse.create({
+                    ...result,
+                    hookEventId: hookEvent.id,
+                });
+                response.status(result.status).send(result.data);
+            } catch (error) {
+                await TargetResponse.create({
+                    status: 500,
+                    data: {},
+                    headers: {},
+                    hookEventId: hookEvent.id,
+                });
+                response.sendStatus(500);
+            }
+            await pubSub.publish(
+                'NEW_HOOK_EVENT',
+                JSON.stringify(hookEvent.toJSON()),
+            );
+        },
+    );
 
     app.use(express.static(path.join(__dirname, '../../../web/build')));
 

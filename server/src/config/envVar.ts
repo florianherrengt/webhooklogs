@@ -32,3 +32,8 @@ if (!process.env.REDIS_URL) {
 }
 export const REDIS_URL = process.env.REDIS_URL;
 export const HTTPS = process.env.HTTPS === 'true';
+
+if (!process.env.ADMIN_SECRET) {
+    throw new Error('ADMIN_SECRET env var required');
+}
+export const ADMIN_SECRET = process.env.ADMIN_SECRET;

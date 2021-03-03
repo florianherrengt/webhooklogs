@@ -12,15 +12,18 @@ import {
     DOMAIN,
     HTTPS,
     REDIS_URL,
+    ADMIN_SECRET,
 } from './envVar';
 
 interface Config {
     app: {
         port: string;
         domain: string;
-        https: boolean;
         protocol: 'https' | 'http';
         jwt: {
+            secret: string;
+        };
+        admin: {
             secret: string;
         };
     };
@@ -50,11 +53,13 @@ interface Config {
 export const config: Config = {
     app: {
         port: PORT,
-        https: HTTPS,
         protocol: HTTPS ? 'https' : 'http',
         domain: DOMAIN,
         jwt: {
             secret: JWT_SECRET,
+        },
+        admin: {
+            secret: ADMIN_SECRET,
         },
     },
     database: {
