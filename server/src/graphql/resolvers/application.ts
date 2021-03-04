@@ -7,12 +7,12 @@ import {
     Resolver,
     UnauthorizedError,
 } from 'type-graphql';
-import { GraphqlContext } from '../graphqlContext';
+import { GraphqlContext } from '../../graphqlContext';
 import {
     Application,
     CreateApplicationInput,
     UpdateApplicationInput,
-} from '../models';
+} from '../../models';
 
 @Resolver((of) => Application)
 export class ApplicationResolver {

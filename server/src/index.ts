@@ -3,7 +3,7 @@ import { createApp } from './app';
 import { pubSub } from './pubSub';
 import { SubscriptionServer } from 'subscriptions-transport-ws';
 import { execute, subscribe } from 'graphql';
-import { resolvers } from './resolvers';
+import { resolvers } from './graphql/resolvers';
 
 import { buildSchema } from 'type-graphql';
 import { config } from './config';

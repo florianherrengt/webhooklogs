@@ -1,7 +1,0 @@
-mutation insertTargetResponses($objects: [targets_responses_insert_input!]!) {
-    insert_targets_responses(objects: $objects) {
-        returning {
-            id
-        }
-    }
-}

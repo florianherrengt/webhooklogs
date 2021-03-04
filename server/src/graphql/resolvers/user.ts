@@ -8,12 +8,12 @@ import {
     Arg,
     UnauthorizedError,
 } from 'type-graphql';
-import { GraphqlContext } from '../graphqlContext';
-import { UpdateUserInput, User } from '../models/User';
+import { GraphqlContext } from '../../graphqlContext';
+import { UpdateUserInput, User } from '../../models/User';
 import { Stripe } from 'stripe';
-import { stripe } from '../helpers/stripe';
-import { config } from '../config';
-import { sequelize } from '../models';
+import { stripe } from '../../helpers/stripe';
+import { config } from '../../config';
+import { sequelize } from '../../models';
 
 @Resolver(() => User)
 export class UserResolver {

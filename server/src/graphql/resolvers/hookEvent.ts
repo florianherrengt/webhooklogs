@@ -15,7 +15,7 @@ import {
     Ctx,
     UnauthorizedError,
 } from 'type-graphql';
-import { GraphqlContext } from '../graphqlContext';
+import { GraphqlContext } from '../../graphqlContext';
 import {
     Application,
     HookEvent,
@@ -24,8 +24,8 @@ import {
     TargetResponse,
     TargetResponseAttributes,
     TargetResponseGraphqlAttributes,
-} from '../models';
-import { User } from '../models/User';
+} from '../../models';
+import { User } from '../../models/User';
 import PaginatedResponse from './PaginatedResponse';
 import { WhereOps } from './WhereOps';
 
