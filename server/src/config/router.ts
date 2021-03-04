@@ -3,7 +3,7 @@ import { config } from '.';
 
 const configRouter = Router();
 
-configRouter.get('/api/config', (request, response) => {
+configRouter.get('/config', (request, response) => {
     if (request.headers['admin-secret'] !== config.app.admin.secret) {
         return response.status(401).json({
             error: 'invalid secret',

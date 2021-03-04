@@ -17,8 +17,8 @@ import { Sequelize } from 'sequelize/types';
 import path from 'path';
 import { config, configRouter } from './config';
 import url from 'url';
-import { redisClient } from './redis';
 import { GraphQLSchema } from 'graphql';
+import { healhtzRouter } from './healthz';
 
 type SupportedMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
@@ -31,24 +31,12 @@ const createApp = async (): Promise<{
     sequelize: Sequelize;
     schema: GraphQLSchema;
 }> => {
-    const app = express();
-    app.use(cors());
     await sequelize.sync();
 
-    app.get('/api/healthz', async (_, response) => {
-        try {
-            await sequelize.authenticate();
-            await new Promise((resolve, reject) =>
-                redisClient.ping((error, result) =>
-                    error ? reject(error) : resolve(result),
-                ),
-            );
-            response.json({ ok: 1 });
-        } catch (error) {
-            response.status(500).send(error);
-        }
-    });
-    app.use(configRouter);
+    const app = express();
+    app.use('/api', cors());
+    app.use('/api', healhtzRouter);
+    app.use('/api', configRouter);
     app.use((request, _response, next) => {
         const [type, token] = request.headers.authorization?.split(' ') || [];
         if (type === 'Bearer' && typeof token === 'string') {
@@ -161,7 +149,7 @@ const createApp = async (): Promise<{
 
     if (config.app.serveStaticFiles) {
         app.use(express.static(path.join(__dirname, '../../../web/build')));
-        app.get('*', function (req, res) {
+        app.get('*', function(_, res) {
             res.sendFile(
                 path.join(__dirname, '../../../web/build', 'index.html'),
             );
