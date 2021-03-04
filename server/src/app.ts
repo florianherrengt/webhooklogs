@@ -34,7 +34,7 @@ const createApp = async (): Promise<{
 
     app.use('/api', graphqlRouter);
 
-    app.use('*', anyRouter);
+    app.use(anyRouter);
     return { app, apolloServer, sequelize, schema };
 };
 export { createApp };
