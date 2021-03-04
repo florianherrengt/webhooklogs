@@ -6,6 +6,7 @@ import {
     TargetResponse,
     TargetResponseGraphqlAttributes,
 } from './TargetResponse';
+import { pubSub } from '../pubSub';
 
 export interface HookEventAttributes {
     id: string;
@@ -97,3 +98,7 @@ HookEvent.init(
         sequelize,
     },
 );
+
+HookEvent.afterCreate((hookEvent) => {
+    pubSub.publish('NEW_HOOK_EVENT', JSON.stringify(hookEvent.toJSON()));
+});

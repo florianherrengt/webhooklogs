@@ -183,7 +183,6 @@ export class HookEventResolver {
         @Args() args: NewHookEventArgs,
         @Ctx() context: GraphqlContext,
     ): Promise<HookEventGraphqlAttributes | Error | null> {
-        console.log('NEW_HOOK_EVENT', { hookEventString, args, context });
         if (!hookEventString) return null;
         const hookEvent: HookEventAttributes = JSON.parse(hookEventString);
         const applications = await Application.findAll({
