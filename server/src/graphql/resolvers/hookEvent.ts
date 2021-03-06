@@ -1,18 +1,17 @@
-import { Max, MaxLength } from 'class-validator';
+import { Max } from 'class-validator';
 import { Op, Order } from 'sequelize';
 import {
     Arg,
     Args,
     ArgsType,
+    Ctx,
     Field,
+    InputType,
     ObjectType,
     Query,
     Resolver,
-    InputType,
-    Int,
     Root,
     Subscription,
-    Ctx,
     UnauthorizedError,
 } from 'type-graphql';
 import { GraphqlContext } from '../../graphqlContext';
@@ -25,7 +24,7 @@ import {
     TargetResponseAttributes,
     TargetResponseGraphqlAttributes,
 } from '../../models';
-import { User } from '../../models/User';
+import { NEW_HOOK_EVENT, UPDATE_HOOK_EVENT } from '../../pubSub';
 import PaginatedResponse from './PaginatedResponse';
 import { WhereOps } from './WhereOps';
 
@@ -167,7 +166,7 @@ export class HookEventResolver {
         };
     }
     @Subscription(() => HookEvent, {
-        topics: 'NEW_HOOK_EVENT',
+        topics: NEW_HOOK_EVENT,
         filter: ({ payload, args }) => {
             try {
                 return args.applicationId === JSON.parse(payload).applicationId;
@@ -197,5 +196,24 @@ export class HookEventResolver {
             return new UnauthorizedError();
         }
         return this.hookEventById(hookEvent.id);
+    }
+    @Subscription(() => HookEvent, {
+        topics: UPDATE_HOOK_EVENT,
+        filter: ({ payload, args }) => {
+            try {
+                return args.applicationId === JSON.parse(payload).applicationId;
+            } catch (error) {
+                console.error(error);
+                return false;
+            }
+        },
+        nullable: true,
+    })
+    async updateHookEvent(
+        @Root() hookEventString: string,
+        @Args() args: NewHookEventArgs,
+        @Ctx() context: GraphqlContext,
+    ): Promise<HookEventGraphqlAttributes | Error | null> {
+        return this.newHookEvent(hookEventString, args, context);
     }
 }

@@ -6,7 +6,7 @@ import {
     TargetResponse,
     TargetResponseGraphqlAttributes,
 } from './TargetResponse';
-import { pubSub } from '../pubSub';
+import { NEW_HOOK_EVENT, publish, pubSub } from '../pubSub';
 
 export interface HookEventAttributes {
     id: string;
@@ -31,12 +31,12 @@ export interface HookEventGraphqlAttributes {
     targetResponse?: TargetResponseGraphqlAttributes | null;
 }
 
-export interface ProjectCreationAttributes
+export interface HookEventCreationAttributes
     extends Optional<HookEventAttributes, 'id' | 'createdAt' | 'updatedAt'> {}
 
 @ObjectType()
 export class HookEvent
-    extends Model<HookEventAttributes, ProjectCreationAttributes>
+    extends Model<HookEventAttributes, HookEventCreationAttributes>
     implements HookEventAttributes {
     @Field()
     id: string;
@@ -98,7 +98,6 @@ HookEvent.init(
         sequelize,
     },
 );
-
 HookEvent.afterCreate((hookEvent) => {
-    pubSub.publish('NEW_HOOK_EVENT', JSON.stringify(hookEvent.toJSON()));
+    publish.newHookEvent(hookEvent);
 });

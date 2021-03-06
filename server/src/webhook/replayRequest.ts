@@ -2,41 +2,45 @@ import http from 'http';
 import https from 'https';
 import url from 'url';
 import express from 'express';
-import { Application } from '../models';
+import { Application, ApplicationAttributes } from '../models';
 import { omit } from 'lodash';
 
 interface ReplayRequestParams {
-    application: Application;
+    application: ApplicationAttributes;
     request: express.Request;
 }
 
-export const replayRequest = ({
-    application,
-    request: { path, method, headers },
-}: ReplayRequestParams): Promise<{
+export interface ReplayRequestResults {
     data: string | null;
     error: Error | null;
     status: number;
     headers: object;
-} | null> =>
+}
+
+export const replayRequest = ({
+    application,
+    request: { path, method, headers, body },
+}: ReplayRequestParams): Promise<ReplayRequestResults | null> =>
     new Promise((resolve) => {
         if (!application.targetUrl) {
             return resolve(null);
         }
-        const { host, protocol } = url.parse(application.targetUrl);
-        if (!host) {
+        const { hostname, protocol, port } = url.parse(application.targetUrl);
+        if (!hostname) {
             return resolve({
                 data: null,
                 headers: {},
-                error: new Error(`${host} is not a valid host`),
+                error: new Error(`${hostname} is not a valid host`),
                 status: 500,
             });
         }
 
         const options: http.RequestOptions = {
-            host,
+            host: hostname,
+            port,
             path,
             method,
+            timeout: 60000,
             headers: {
                 ...omit(headers, ['host', 'if-none-match']),
             },
@@ -51,7 +55,6 @@ export const replayRequest = ({
             responseHeaders = res.headers;
             res.on('data', (chunck: string) => {
                 data += chunck;
-                console.log(data);
             });
         };
         const req =
@@ -67,6 +70,9 @@ export const replayRequest = ({
             });
         });
         req.on('close', () => {
+            try {
+                data = JSON.parse(data);
+            } catch (e) {}
             resolve({
                 data,
                 status: responseStatus || 0,
@@ -74,5 +80,6 @@ export const replayRequest = ({
                 error: null,
             });
         });
+        req.write(typeof body === 'string' ? body : JSON.stringify(body));
         req.end();
     });

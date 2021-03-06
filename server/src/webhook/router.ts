@@ -1,101 +1,37 @@
 import bodyParser from 'body-parser';
 import { Router } from 'express';
+import { cache } from '../cache';
 import { Application, HookEvent, TargetResponse } from '../models';
+import { processHookEvent } from './processHookEvent';
 import { replayRequest } from './replayRequest';
 
 export const webhookRouter = Router();
 
 webhookRouter.use(
-    '/webhook/:appId',
+    '/webhook/:applicationId',
     bodyParser.json(),
     bodyParser.urlencoded(),
     async (request, response) => {
         const {
-            // method,
-            headers,
-            body,
-            params: { appId },
+            params: { applicationId },
         } = request;
 
-        const application = await Application.findByPk(appId);
-        if (!application) {
-            return response
-                .status(404)
-                .json({ error: `no application with id: ${appId} found.` });
-        }
-
-        const [hookEvent, replayResponse] = await Promise.all([
-            HookEvent.create({
-                ...request,
-                path: request.path || '/',
-                headers: request.headers,
-                applicationId: appId,
-            }),
-            replayRequest({
-                application,
-                request,
-            }),
-        ]);
-
-        if (!replayResponse?.data) {
-            return response.json(hookEvent);
-        }
-
-        const data = replayResponse.data || replayResponse.error?.message || {};
-        await TargetResponse.create({
-            data,
-            headers: replayResponse.headers,
-            hookEventId: hookEvent.id,
-            status: replayResponse.status,
+        const { hookEvent, replayResponse } = await processHookEvent({
+            request,
+            applicationId,
         });
-        Object.entries(replayResponse.headers).forEach(([key, value]) => {
-            response.setHeader(key, value);
-        });
-        response.status(replayResponse.status).send(data);
-        // try {
-        //     const result = await {
-        //         GET: () =>
-        //             axios.get(targetUrl, {
-        //                 headers: {
-        //                     ...headers,
-        //                     host,
-        //                 },
-        //             }),
-        //         POST: () =>
-        //             axios.post(targetUrl, body, {
-        //                 headers: {
-        //                     ...headers,
-        //                     host,
-        //                 },
-        //             }),
-        //         PUT: () =>
-        //             axios.put(targetUrl, body, {
-        //                 headers: {
-        //                     ...headers,
-        //                     host,
-        //                 },
-        //             }),
-        //         DELETE: () =>
-        //             axios.delete(targetUrl, {
-        //                 headers: {
-        //                     ...headers,
-        //                     host,
-        //                 },
-        //             }),
-        //     }[request.method]();
-        //     await TargetResponse.create({
-        //         ...result,
-        //         hookEventId: hookEvent.id,
-        //     });
-        //     return response.status(result.status).send(result.data);
-        // } catch (error) {
-        //     await TargetResponse.create({
-        //         status: 500,
-        //         data: error,
-        //         headers: {},
-        //         hookEventId: hookEvent.id,
-        //     });
-        //     return response.status(500).send(error);
-        // }
+
+        Object.entries(replayResponse?.headers || []).forEach(
+            ([key, value]) => {
+                response.setHeader(key, value);
+            },
+        );
+        response.status(replayResponse?.status || 200).send(
+            replayResponse?.data || {
+                hookEvent,
+                message: 'no data return by the target',
+                replayResponse,
+            },
+        );
     },
 );

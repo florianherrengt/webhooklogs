@@ -24,6 +24,7 @@ const createApp = async (): Promise<{
 
     const app = express();
 
+    app.get('/api/ping', (_, response) => response.send('pong'));
     app.use('/api', cors());
     app.use('/api', healhtzRouter);
     app.use('/api', configRouter);

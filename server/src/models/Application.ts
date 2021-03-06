@@ -2,6 +2,7 @@ import { DataTypes, Model } from 'sequelize';
 import { sequelize } from './sequelize';
 import { ObjectType, Field, InputType } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
+import { cache } from '../cache';
 
 export interface ApplicationAttributes {
     id: string;
@@ -73,3 +74,11 @@ Application.init(
         sequelize,
     },
 );
+
+Application.afterUpdate((application) => {
+    cache.application.unset(application.id);
+});
+
+Application.afterDestroy((application) => {
+    cache.application.unset(application.id);
+});

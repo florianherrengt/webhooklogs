@@ -14,23 +14,12 @@ import { config } from './config';
     const httpServer = createServer(app);
     apolloServer.installSubscriptionHandlers(httpServer);
     httpServer.listen(config.app.port, () => {
-        console.log(`server ready: http://localhost:${config.app.port}`);
-        // SubscriptionServer.create(
-        //     {
-        //         schema,
-        //         execute,
-        //         subscribe,
-        //     },
-        //     {
-        //         server: httpServer,
-        //         path: '/api/graphql',
-        //     },
-        // );
+        console.info(`server ready: http://localhost:${config.app.port}`);
     });
 
     process.on('SIGTERM', () => {
         httpServer.close(async () => {
-            console.log('Http server closed.');
+            console.info('Http server closed.');
             await sequelize.close();
             process.exit(0);
         });

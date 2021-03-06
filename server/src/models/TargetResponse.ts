@@ -2,6 +2,8 @@ import { DataTypes, Model, Optional } from 'sequelize';
 import { sequelize } from './sequelize';
 import { ObjectType, Field } from 'type-graphql';
 import { v4 as uuid } from 'uuid';
+import { publish } from '../pubSub';
+import { HookEvent } from './HookEvent';
 
 export interface TargetResponseAttributes {
     id: string;
@@ -68,3 +70,11 @@ TargetResponse.init(
         sequelize,
     },
 );
+
+TargetResponse.afterCreate(async (targetResponse) => {
+    const hookEvent = await HookEvent.findByPk(targetResponse.hookEventId);
+    if (!hookEvent) {
+        return;
+    }
+    publish.updateHookEvent(hookEvent);
+});

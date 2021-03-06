@@ -153,10 +153,16 @@ export type UpdateApplicationInput = {
 export type Subscription = {
   __typename?: 'Subscription';
   newHookEvent?: Maybe<HookEvent>;
+  updateHookEvent?: Maybe<HookEvent>;
 };
 
 
 export type SubscriptionNewHookEventArgs = {
+  applicationId: Scalars['String'];
+};
+
+
+export type SubscriptionUpdateHookEventArgs = {
   applicationId: Scalars['String'];
 };
 
@@ -260,6 +266,19 @@ export type NewHookEventSubscriptionVariables = Exact<{
 export type NewHookEventSubscription = (
   { __typename?: 'Subscription' }
   & { newHookEvent?: Maybe<(
+    { __typename?: 'HookEvent' }
+    & HookEventsFragmentFragment
+  )> }
+);
+
+export type UpdateHookEventSubscriptionVariables = Exact<{
+  applicationId: Scalars['String'];
+}>;
+
+
+export type UpdateHookEventSubscription = (
+  { __typename?: 'Subscription' }
+  & { updateHookEvent?: Maybe<(
     { __typename?: 'HookEvent' }
     & HookEventsFragmentFragment
   )> }
@@ -599,6 +618,35 @@ export function useNewHookEventSubscription(baseOptions: Apollo.SubscriptionHook
       }
 export type NewHookEventSubscriptionHookResult = ReturnType<typeof useNewHookEventSubscription>;
 export type NewHookEventSubscriptionResult = Apollo.SubscriptionResult<NewHookEventSubscription>;
+export const UpdateHookEventDocument = gql`
+    subscription updateHookEvent($applicationId: String!) {
+  updateHookEvent(applicationId: $applicationId) {
+    ...HookEventsFragment
+  }
+}
+    ${HookEventsFragmentFragmentDoc}`;
+
+/**
+ * __useUpdateHookEventSubscription__
+ *
+ * To run a query within a React component, call `useUpdateHookEventSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useUpdateHookEventSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUpdateHookEventSubscription({
+ *   variables: {
+ *      applicationId: // value for 'applicationId'
+ *   },
+ * });
+ */
+export function useUpdateHookEventSubscription(baseOptions: Apollo.SubscriptionHookOptions<UpdateHookEventSubscription, UpdateHookEventSubscriptionVariables>) {
+        return Apollo.useSubscription<UpdateHookEventSubscription, UpdateHookEventSubscriptionVariables>(UpdateHookEventDocument, baseOptions);
+      }
+export type UpdateHookEventSubscriptionHookResult = ReturnType<typeof useUpdateHookEventSubscription>;
+export type UpdateHookEventSubscriptionResult = Apollo.SubscriptionResult<UpdateHookEventSubscription>;
 export const MeDocument = gql`
     query Me {
   me {

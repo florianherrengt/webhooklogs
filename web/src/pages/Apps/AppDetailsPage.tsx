@@ -8,21 +8,20 @@ import {
   useNewHookEventSubscription,
   HookEventsFragmentFragmentDoc,
   HookEventsQuery,
+  useUpdateHookEventSubscription,
 } from '../../helpers';
-import { HookEventDetails } from '../../components/HookEvents/HookEventDetails';
 import { NavbarContainer } from '../../containers';
 import { useParams } from 'react-router-dom';
-import { config } from '../../config';
 
 interface AppDetailsPageProps {}
 
 export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
   props,
 ) => {
-  const { id: appId } = useParams<{ id: string }>();
+  const { id: applicationId } = useParams<{ id: string }>();
 
   const newHookEventSubscriptionResults = useNewHookEventSubscription({
-    variables: { applicationId: appId },
+    variables: { applicationId },
     onSubscriptionData({ subscriptionData, client }) {
       client.cache.modify({
         fields: {
@@ -43,13 +42,46 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
       });
     },
   });
+  useUpdateHookEventSubscription({
+    variables: { applicationId },
+    onSubscriptionData({ subscriptionData, client }) {
+      client.cache.modify({
+        fields: {
+          hookEvents(
+            existingHookevents: HookEventsQuery['hookEvents'],
+          ): HookEventsQuery['hookEvents'] {
+            const newHookeventRef = client.cache.writeFragment({
+              data: subscriptionData.data?.updateHookEvent,
+              fragment: HookEventsFragmentFragmentDoc,
+            }) as any;
+            if (
+              !subscriptionData.data ||
+              !subscriptionData.data.updateHookEvent?.id
+            ) {
+              return existingHookevents;
+            }
+            return {
+              ...existingHookevents,
+              items: [
+                newHookeventRef,
+                ...existingHookevents.items.filter(
+                  (item) =>
+                    item.id !== subscriptionData.data?.updateHookEvent?.id,
+                ),
+              ],
+            };
+          },
+        },
+      });
+    },
+  });
   const applicationByIdResults = useApplicationByIdQuery({
-    variables: { id: appId },
+    variables: { id: applicationId },
     fetchPolicy: 'cache-first',
   });
   const hookEventsResults = useHookEventsQuery({
     variables: {
-      where: { applicationId: { eq: appId } },
+      where: { applicationId: { eq: applicationId } },
       cursor: { limit: 100 },
     },
     fetchPolicy: 'network-only',
@@ -88,7 +120,7 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
             </h1>
             <div className="d-flex">
               <Button
-                link={`/app/${appId}/settings`}
+                link={`/app/${applicationId}/settings`}
                 outline
                 color="secondary"
                 iconLeft={<Cog size={16} />}

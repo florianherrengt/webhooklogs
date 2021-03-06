@@ -33,3 +33,9 @@ subscription newHookEvent($applicationId: String!) {
     ...HookEventsFragment
   }
 }
+
+subscription updateHookEvent($applicationId: String!) {
+  updateHookEvent(applicationId: $applicationId) {
+    ...HookEventsFragment
+  }
+}
