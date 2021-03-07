@@ -42,3 +42,18 @@ if (!process.env.SERVE_STATIC_FILES) {
     throw new Error('SERVE_STATIC_FILES env var required');
 }
 export const SERVE_STATIC_FILES = process.env.SERVE_STATIC_FILES === 'true';
+
+if (!process.env.MATRIX_TOKEN) {
+    throw new Error('MATRIX_TOKEN env var required');
+}
+export const MATRIX_TOKEN = process.env.MATRIX_TOKEN;
+
+if (!process.env.MATRIX_DOMAIN) {
+    throw new Error('MATRIX_DOMAIN env var required');
+}
+export const MATRIX_DOMAIN = process.env.MATRIX_DOMAIN;
+
+if (!process.env.MATRIX_ROOM_ID) {
+    throw new Error('MATRIX_ROOM_ID env var required');
+}
+export const MATRIX_ROOM_ID = process.env.MATRIX_ROOM_ID;

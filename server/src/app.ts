@@ -24,6 +24,7 @@ const createApp = async (): Promise<{
     await sequelize.sync();
 
     const app = express();
+    app.enable('trust proxy');
 
     app.get('/api/ping', (_, response) => response.send('pong'));
     app.use('/api', cors());

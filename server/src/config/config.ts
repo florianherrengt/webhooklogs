@@ -14,6 +14,9 @@ import {
     REDIS_URL,
     ADMIN_SECRET,
     SERVE_STATIC_FILES,
+    MATRIX_TOKEN,
+    MATRIX_DOMAIN,
+    MATRIX_ROOM_ID,
 } from './envVar';
 
 interface Config {
@@ -29,6 +32,7 @@ interface Config {
         };
         serveStaticFiles: boolean;
     };
+    matrix: { token: string; domain: string; roomId: string };
     database: {
         url: string;
     };
@@ -64,6 +68,11 @@ export const config: Config = {
             secret: ADMIN_SECRET,
         },
         serveStaticFiles: SERVE_STATIC_FILES,
+    },
+    matrix: {
+        token: MATRIX_TOKEN,
+        domain: MATRIX_DOMAIN,
+        roomId: MATRIX_ROOM_ID,
     },
     database: {
         url: DATABASE_URL,

@@ -1,5 +1,4 @@
 import express, { Router } from 'express';
-import { createGraphqlRouter } from '../router';
 import supertest from 'supertest';
 import { Application, User } from '../../models';
 import { gql } from 'apollo-server-express';
@@ -11,7 +10,6 @@ import { createJwt } from '../../helpers/createJwt';
 import * as testHelpers from '../../helpers/testHelpers';
 
 describe('resolvers/Applications', () => {
-    let graphqlRouter: Router;
     let app: express.Application;
     let agent: supertest.SuperTest<supertest.Test>;
     beforeAll(async () => {
@@ -286,7 +284,7 @@ describe('resolvers/Applications', () => {
             })
             .set('authorization', `Bearer ${createJwt({ userId: user1.id })}`);
 
-        expect(results.body.errors[0].message).toEqual(
+        expect(results3.body.errors[0].message).toEqual(
             expect.stringContaining('Access denied'),
         );
     });
