@@ -14,6 +14,7 @@ import { sequelize } from './models';
 import { passportRouter } from './passport/router';
 import { webhookRouter } from './webhook';
 import { landingRouter } from './landing';
+import { contactUsRouter } from './contact-us';
 
 const createApp = async (): Promise<{
     app: express.Express;
@@ -27,6 +28,7 @@ const createApp = async (): Promise<{
     app.enable('trust proxy');
 
     app.get('/api/ping', (_, response) => response.send('pong'));
+    app.use('/api', contactUsRouter);
     app.use('/api', cors());
     app.use('/api', healhtzRouter);
     app.use('/api', configRouter);
