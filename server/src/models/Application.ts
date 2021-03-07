@@ -46,6 +46,10 @@ export class Application
     targetUrl?: string;
     @Field((type) => String)
     userId: string;
+    @Field((type) => String)
+    createdAt: Date;
+    @Field((type) => String)
+    updatedAt: Date;
 }
 
 Application.init(

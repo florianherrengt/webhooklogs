@@ -14,7 +14,8 @@ export class Cache<T> {
     }
     get = (key: string): Promise<T | null> =>
         new Promise((resolve, reject) => {
-            redisClient.get(`${this.namespace}:${key}`, (error, data) => {
+            const cacheKey = this.namespace ? `${this.namespace}:${key}` : key;
+            redisClient.get(cacheKey, (error, data) => {
                 if (error) return reject(error);
                 if (!data) {
                     return resolve((data as any) as T);
@@ -28,8 +29,9 @@ export class Cache<T> {
         });
     set = (key: string, value: T, expire: number = 60 * 60 * 24) =>
         new Promise((resolve, reject) => {
+            const cacheKey = this.namespace ? `${this.namespace}:${key}` : key;
             redisClient.set(
-                `${this.namespace}:${key}`,
+                cacheKey,
                 typeof value !== 'string' ? JSON.stringify(value) : value,
                 'EX',
                 expire,
@@ -41,7 +43,8 @@ export class Cache<T> {
         });
     unset = (key: string) =>
         new Promise((resolve, reject) => {
-            redisClient.del(`${this.namespace}:${key}`, (error, reply) => {
+            const cacheKey = this.namespace ? `${this.namespace}:${key}` : key;
+            redisClient.del(cacheKey, (error, reply) => {
                 if (error) return reject(error);
                 resolve(reply);
             });
@@ -51,5 +54,6 @@ export class Cache<T> {
 export class ApplicationCache extends Cache<ApplicationAttributes> {}
 
 export const cache = {
+    all: new Cache({ namespace: '' }),
     application: new ApplicationCache({ namespace: 'application' }),
 };

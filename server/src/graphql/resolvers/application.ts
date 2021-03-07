@@ -7,6 +7,7 @@ import {
     Resolver,
     UnauthorizedError,
 } from 'type-graphql';
+import { cache } from '../../cache';
 import { GraphqlContext } from '../../graphqlContext';
 import {
     Application,
@@ -17,8 +18,14 @@ import {
 @Resolver((of) => Application)
 export class ApplicationResolver {
     @Query(() => Application)
-    applicationById(@Arg('id') id: string) {
-        return Application.findByPk(id);
+    async applicationById(@Arg('id') id: string) {
+        const application =
+            (await cache.application.get(id)) ||
+            (await Application.findByPk(id));
+        if (application) {
+            await cache.application.set(application.id, application);
+        }
+        return application;
     }
     @Query(() => [Application])
     applications(@Ctx() context: GraphqlContext) {
