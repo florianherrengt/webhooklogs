@@ -6,15 +6,16 @@ import { gql } from 'apollo-server-express';
 import { print } from 'graphql/language/printer';
 import { cache } from '../../cache';
 import { omit } from 'lodash';
+import { createApp } from '../../app';
+import { createJwt } from '../../helpers/createJwt';
 
 describe('resolvers/Applications', () => {
     let graphqlRouter: Router;
     let app: express.Application;
     let agent: supertest.SuperTest<supertest.Test>;
     beforeAll(async () => {
-        graphqlRouter = (await createGraphqlRouter()).graphqlRouter;
-        app = express();
-        app.use('/api', graphqlRouter);
+        app = (await createApp()).app;
+        // app.use('/api', graphqlRouter);
         agent = supertest(app);
     });
     beforeEach(() => {
@@ -49,7 +50,10 @@ describe('resolvers/Applications', () => {
             variables: { id: application.id },
         };
 
-        const results1 = await agent.post('/api/graphql').send(query);
+        const results1 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user.id })}`);
 
         expect(results1.body.errors).toBeUndefined();
         expect(application.toJSON()).toEqual({
@@ -84,7 +88,10 @@ describe('resolvers/Applications', () => {
             cache.all.get(`application:${application.id}`),
         ).resolves.toBeNull();
 
-        const results2 = await agent.post('/api/graphql').send(query);
+        const results2 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user.id })}`);
         expect(results2.body.errors).toBeUndefined();
         expect(application.toJSON()).toEqual({
             ...results2.body.data.applicationById,
@@ -103,5 +110,59 @@ describe('resolvers/Applications', () => {
         expect(results2.body.data.applicationById.targetUrl).toEqual(
             'http://target-url.com',
         );
+    });
+    test('applications', async () => {
+        const user1 = await User.create({
+            username: 'user1',
+            stripeCustomerId: 'sci',
+            email: 'hello@test.com',
+            githubId: 'github_id',
+        });
+        const user2 = await User.create({
+            username: 'user2',
+            stripeCustomerId: 'sci',
+            email: 'hello@test.com',
+            githubId: 'github_id',
+        });
+        const application1 = await Application.create({
+            name: 'app1',
+            userId: user1.id,
+        });
+        const application2 = await Application.create({
+            name: 'app2',
+            userId: user1.id,
+        });
+        const application3 = await Application.create({
+            name: 'app3',
+            userId: user2.id,
+        });
+        const query = {
+            query: print(gql`
+                query applications {
+                    applications {
+                        id
+                    }
+                }
+            `),
+        };
+
+        const results1 = await agent.post('/api/graphql').send(query);
+        expect(results1.body.data.applications).toEqual([]);
+
+        const results2 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user1.id })}`);
+        expect(
+            results2.body.data.applications.map(({ id }: any) => id),
+        ).toEqual([application1.id, application2.id]);
+
+        const results3 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user2.id })}`);
+        expect(
+            results3.body.data.applications.map(({ id }: any) => id),
+        ).toEqual([application3.id]);
     });
 });

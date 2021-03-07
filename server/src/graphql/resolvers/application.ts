@@ -18,36 +18,44 @@ import {
 @Resolver((of) => Application)
 export class ApplicationResolver {
     @Query(() => Application)
-    async applicationById(@Arg('id') id: string) {
+    async applicationById(
+        @Arg('id') id: string,
+        @Ctx() context: GraphqlContext,
+    ) {
         const application =
             (await cache.application.get(id)) ||
             (await Application.findByPk(id));
         if (application) {
             await cache.application.set(application.id, application);
         }
+        if (application?.userId !== context.user?.id) {
+            return new UnauthorizedError();
+        }
         return application;
     }
     @Query(() => [Application])
-    applications(@Ctx() context: GraphqlContext) {
-        return Application.findAll({
+    async applications(@Ctx() context: GraphqlContext) {
+        const applications = await Application.findAll({
             where: {
-                userId: context.user?.id,
+                userId: context.user?.id || null,
             },
         });
+        return applications.map(({ id }) => this.applicationById(id, context));
     }
     @Mutation(() => Application)
-    createApplication(
+    async createApplication(
         @Arg('input') input: CreateApplicationInput,
         @Ctx() context: GraphqlContext,
     ) {
         if (!context.user?.id) {
             return new UnauthorizedError();
         }
-        return Application.create({
+        const { id } = await Application.create({
             name: input.name.trim(),
             targetUrl: input.targetUrl,
             userId: context.user.id,
         });
+        return this.applicationById(id, context);
     }
     @Mutation(() => Int)
     deleteApplicationById(
@@ -57,7 +65,10 @@ export class ApplicationResolver {
         if (!context.user?.id) {
             return new UnauthorizedError();
         }
-        return Application.destroy({ where: { id }, cascade: true });
+        return Application.destroy({
+            where: { id, userId: context.user.id },
+            cascade: true,
+        });
     }
     @Mutation(() => Application)
     async updateApplicationById(
@@ -71,6 +82,6 @@ export class ApplicationResolver {
         await Application.update(input, {
             where: { id: input.id, userId },
         });
-        return this.applicationById(input.id);
+        return this.applicationById(input.id, context);
     }
 }
