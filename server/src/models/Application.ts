@@ -82,10 +82,10 @@ Application.init(
     },
 );
 
-Application.afterUpdate((application) => {
-    cache.application.unset(application.id);
+Application.afterUpdate(async (application) => {
+    await cache.application.unset(application);
 });
 
-Application.afterDestroy((application) => {
-    cache.application.unset(application.id);
+Application.afterDestroy(async (application) => {
+    await cache.application.unset(application);
 });

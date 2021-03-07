@@ -6,4 +6,6 @@ cockroach-data
 deployment/config
 .dockerbuild
 *.db
+*.rdb
+**/*.rdb
 *.bin

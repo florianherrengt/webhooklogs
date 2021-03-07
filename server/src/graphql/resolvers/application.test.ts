@@ -8,6 +8,7 @@ import { cache } from '../../cache';
 import { omit } from 'lodash';
 import { createApp } from '../../app';
 import { createJwt } from '../../helpers/createJwt';
+import * as testHelpers from '../../helpers/testHelpers';
 
 describe('resolvers/Applications', () => {
     let graphqlRouter: Router;
@@ -164,5 +165,129 @@ describe('resolvers/Applications', () => {
         expect(
             results3.body.data.applications.map(({ id }: any) => id),
         ).toEqual([application3.id]);
+    });
+    test('createApplication', async () => {
+        const user = await testHelpers.createUser();
+
+        const variables = { input: { name: 'my app' } };
+        const query = {
+            query: print(gql`
+                mutation createApplication($input: CreateApplicationInput!) {
+                    createApplication(input: $input) {
+                        id
+                    }
+                }
+            `),
+            variables,
+        };
+
+        const results = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user.id })}`);
+
+        expect(
+            Application.findByPk(results.body.data.createApplication.id),
+        ).resolves.not.toBeNull();
+    });
+    test('updateApplication', async () => {
+        const user1 = await testHelpers.createUser();
+        const user2 = await testHelpers.createUser();
+
+        const application = await testHelpers.createApplication({
+            userId: user1.id,
+        });
+
+        const variables = { input: { id: application.id, name: 'my app' } };
+        const query = {
+            query: print(gql`
+                mutation updateApplicationById(
+                    $input: UpdateApplicationInput!
+                ) {
+                    updateApplicationById(input: $input) {
+                        id
+                        name
+                    }
+                }
+            `),
+            variables,
+        };
+
+        const results = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user2.id })}`);
+
+        expect(results.body.errors[0].message).toEqual(
+            expect.stringContaining('Access denied'),
+        );
+
+        const results2 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user1.id })}`);
+
+        await expect(Application.findByPk(application.id)).resolves.toEqual(
+            expect.objectContaining({ name: 'my app' }),
+        );
+        expect(results2.body.data.updateApplicationById).toEqual({
+            id: application.id,
+            name: 'my app',
+        });
+    });
+    test('deleteApplication', async () => {
+        const user1 = await testHelpers.createUser();
+        const user2 = await testHelpers.createUser();
+
+        const application = await testHelpers.createApplication({
+            userId: user1.id,
+        });
+
+        const variables = { id: application.id };
+        const query = {
+            query: print(gql`
+                mutation deleteApplicationById($id: String!) {
+                    deleteApplicationById(id: $id)
+                }
+            `),
+            variables,
+        };
+
+        const results = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user2.id })}`);
+
+        expect(results.body.errors[0].message).toEqual(
+            expect.stringContaining('Access denied'),
+        );
+
+        const results2 = await agent
+            .post('/api/graphql')
+            .send(query)
+            .set('authorization', `Bearer ${createJwt({ userId: user1.id })}`);
+
+        await expect(Application.findByPk(application.id)).resolves.toEqual(
+            null,
+        );
+        expect(results2.body.data.deleteApplicationById).toEqual(1);
+
+        const results3 = await agent
+            .post('/api/graphql')
+            .send({
+                query: print(gql`
+                    query applicationById($id: String!) {
+                        applicationById(id: $id) {
+                            id
+                        }
+                    }
+                `),
+                variables: { id: application.id },
+            })
+            .set('authorization', `Bearer ${createJwt({ userId: user1.id })}`);
+
+        expect(results.body.errors[0].message).toEqual(
+            expect.stringContaining('Access denied'),
+        );
     });
 });

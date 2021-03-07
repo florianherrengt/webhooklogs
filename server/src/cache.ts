@@ -1,7 +1,7 @@
 import redis from 'redis';
 import { config } from './config';
 import { redisClient } from './redis';
-import { ApplicationAttributes } from './models';
+import { Application, ApplicationAttributes } from './models';
 
 redisClient.on('error', function (error) {
     console.error(error);
@@ -27,7 +27,11 @@ export class Cache<T> {
                 }
             });
         });
-    set = (key: string, value: T, expire: number = 60 * 60 * 24) =>
+    set = (
+        key: string,
+        value: T,
+        expire: number = 60 * 60 * 24,
+    ): Promise<null> =>
         new Promise((resolve, reject) => {
             const cacheKey = this.namespace ? `${this.namespace}:${key}` : key;
             redisClient.set(
@@ -51,9 +55,24 @@ export class Cache<T> {
         });
 }
 
-export class ApplicationCache extends Cache<ApplicationAttributes> {}
+export class ApplicationCache {
+    cache = new Cache({ namespace: 'application' });
+    set(application: Application): Promise<null> {
+        return this.cache.set(application.id, application.toJSON());
+    }
+    async get(id: string): Promise<Application | null> {
+        const cached = await this.cache.get(id);
+        if (!cached) {
+            return null;
+        }
+        return Application.build(cached as any, { isNewRecord: false });
+    }
+    unset(application: Application) {
+        return this.cache.unset(application.id);
+    }
+}
 
 export const cache = {
     all: new Cache({ namespace: '' }),
-    application: new ApplicationCache({ namespace: 'application' }),
+    application: new ApplicationCache(),
 };
