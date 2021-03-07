@@ -10,7 +10,7 @@ export const Login = () => {
       <h2 className="text-center mb-4 mt-4">Welcome to WebhookLogs</h2>
       <div className="card p-3 w-50 mx-auto">
         <Button
-          style={{ width: 280, margin: 'auto' }}
+          style={{ margin: 'auto' }}
           external
           link={`${config.api.protocol}://${config.api.url}/auth/github`}
           iconLeft={<Github size={15} />}

@@ -66,13 +66,4 @@ export class ApplicationResolver {
         });
         return this.applicationById(input.id);
     }
-    // maybe later... no time for this now.
-    // @FieldResolver(() => [HookEvent])
-    // hookEvents(@Root() application: Application): Promise<HookEvent[]> {
-    //     return this.hookEventResolver.hookEvents({
-    //         where: {
-    //             applicationId: { eq: application.id },
-    //         },
-    //     });
-    // }
 }

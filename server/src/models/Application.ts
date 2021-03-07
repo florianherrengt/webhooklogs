@@ -62,6 +62,9 @@ Application.init(
         targetUrl: {
             type: DataTypes.STRING,
             allowNull: true,
+            validate: {
+                notContains: 'webhooklogs.com',
+            },
         },
         userId: {
             type: DataTypes.UUID,

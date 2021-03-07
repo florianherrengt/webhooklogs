@@ -13,6 +13,7 @@ import { healhtzRouter } from './healthz';
 import { sequelize } from './models';
 import { passportRouter } from './passport/router';
 import { webhookRouter } from './webhook';
+import { landingRouter } from './landing';
 
 const createApp = async (): Promise<{
     app: express.Express;
@@ -35,6 +36,7 @@ const createApp = async (): Promise<{
 
     app.use('/api', graphqlRouter);
 
+    app.use('/', landingRouter);
     app.use(anyRouter);
     return { app, apolloServer, sequelize, schema };
 };

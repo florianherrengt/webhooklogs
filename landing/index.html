@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content="The easiest way to debug any request in real-time" />
+        <title>WebhookLogs</title>
+
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+            crossorigin="anonymous"
+        />
+
+        <style>
+            .bd-placeholder-img {
+                font-size: 1.125rem;
+                text-anchor: middle;
+                -webkit-user-select: none;
+                -moz-user-select: none;
+                user-select: none;
+            }
+
+            @media (min-width: 768px) {
+                .bd-placeholder-img-lg {
+                    font-size: 3.5rem;
+                }
+            }
+
+            /* .container {
+                max-width: 960px;
+            } */
+
+            .pricing-header {
+                max-width: 700px;
+            }
+
+            /* Featurettes
+            ------------------------- */
+
+            .featurette-divider {
+                margin: 5rem 0; /* Space out the Bootstrap <hr> more */
+            }
+
+            @media (min-width: 62em) {
+                .featurette-heading {
+                    margin-top: 4rem;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="navbar navbar-light">
+                <div class="container">
+                    <a href="/" class="navbar-brand d-flex align-items-center"> WebhookLogs </a>
+                    <a class="btn btn-outline" href="/auth">Login</a>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="py-5 text-center container">
+                <div class="row py-lg-5">
+                    <div class="col-lg-6 col-md-8 mx-auto">
+                        <h1 class="fw-light">The easiest way to debug any request in real-time</h1>
+                        <p class="lead text-muted">Collect data to help you understand the traffic to your API</p>
+                        <p>
+                            <a href="/auth" class="btn btn-primary my-2">Get started</a>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="container">
+                <div class="row featurette">
+                    <div class="col-lg-5 featurette-heading mb-5">
+                        <div class="mb-2">
+                            <img src="check-solid.svg" class="mb-1 me-2" style="height: 25px" />
+                            Analyse the payload, headers and response
+                        </div>
+                        <div class="mb-2">
+                            <img src="check-solid.svg" class="mb-1 me-2" style="height: 25px" />
+                            Fetch failed requests using our API
+                        </div>
+                        <div class="mb-2">
+                            <img src="check-solid.svg" class="mb-1 me-2" style="height: 25px" />
+                            Keep track of any requests
+                        </div>
+                        <div class="mb-2">
+                            <img src="check-solid.svg" class="mb-1 me-2" style="height: 25px" />
+                            Very responsive team. Ask for any new features.
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <img class="img-fluid shadow-lg" src="screenshot.jpg" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- PRICING -->
+            <section>
+                <div class="container py-5 mt-5">
+                    <div class="pricing-header mx-auto text-center">
+                        <h1 class="display-4">Pricing</h1>
+                        <p class="lead">No hidden surprises. No contracts. No risks. Just value for money.</p>
+                    </div>
+
+                    <div style="width: 300px" class="card mt-4 mb-4 shadow-sm text-center m-auto">
+                        <div class="card-header">
+                            <h4 class="my-0 fw-normal">Standard</h4>
+                        </div>
+                        <div class="card-body">
+                            <h1 class="card-title pricing-card-title">$19 <small class="text-muted">/ mo</small></h1>
+                            <ul class="list-unstyled mt-3 mb-4">
+                                <li>Unlimited apps</li>
+                                <li>1M requests</li>
+                                <li>Cancel anytime</li>
+                            </ul>
+                            <a href="/auth" class="w-100 btn btn-lg btn-primary">Get started</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FAQ -->
+            <section>
+                <div class="container py-5">
+                    <div class="pricing-header mx-auto text-center mb-5">
+                        <h1 class="display-4">Frequently asked questions</h1>
+                    </div>
+                    <div style="max-width: 860px" class="m-auto accordion accordion-flush" id="accordionFlushExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingOne">
+                                <button
+                                    class="accordion-button collapsed fw-bold"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapseOne"
+                                    aria-expanded="false"
+                                    aria-controls="flush-collapseOne"
+                                >
+                                    Can I use it in the browser
+                                </button>
+                            </h2>
+                            <div
+                                id="flush-collapseOne"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="flush-headingOne"
+                                data-bs-parent="#accordionFlushExample"
+                            >
+                                <div class="accordion-body">Yes. You can send any kind of requests from anywhere.</div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingTwo">
+                                <button
+                                    class="accordion-button collapsed fw-bold"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapseTwo"
+                                    aria-expanded="false"
+                                    aria-controls="flush-collapseTwo"
+                                >
+                                    How do I use the API
+                                </button>
+                            </h2>
+                            <div
+                                id="flush-collapseTwo"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="flush-headingTwo"
+                                data-bs-parent="#accordionFlushExample"
+                            >
+                                <div class="accordion-body">
+                                    <p>
+                                        You can fetch all your data, including webhook logs, using our
+                                        <a href="/api/graphql">GraphQL API</a>.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-headingThree">
+                                <button
+                                    class="accordion-button collapsed fw-bold"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapseThree"
+                                    aria-expanded="false"
+                                    aria-controls="flush-collapseThree"
+                                >
+                                    Can you handle my traffic
+                                </button>
+                            </h2>
+                            <div
+                                id="flush-collapseThree"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="flush-headingThree"
+                                data-bs-parent="#accordionFlushExample"
+                            >
+                                <div class="accordion-body">
+                                    <p>Short anwser: Yes.</p>
+                                    <p>
+                                        Long anwser: We have thouroughtly load tested our servers and we can currently
+                                        handle 500+ req/s with ~32ms mean latency. This should be more than enough for
+                                        most applications.
+                                    </p>
+                                    <p>
+                                        <a href="https://drive.specian.co.uk/apps/forms/5NTRiWTybZ3qWS43">Contact us</a>
+                                        if you have specific requirements.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="flush-collapseFour">
+                                <button
+                                    class="accordion-button collapsed fw-bold"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#flush-collapseFour"
+                                    aria-expanded="false"
+                                    aria-controls="flush-collapseFour"
+                                >
+                                    Do you offer entreprise services
+                                </button>
+                            </h2>
+                            <div
+                                id="flush-collapseFour"
+                                class="accordion-collapse collapse"
+                                aria-labelledby="flush-collapseFour"
+                                data-bs-parent="#accordionFlushExample"
+                            >
+                                <div class="accordion-body">
+                                    <p>
+                                        Our team has a long history of working with disruptive startups and some of the
+                                        largest companies in the world. We can help you navigate any complex challenges,
+                                        make it all easy to understand and provide you with options.
+                                    </p>
+                                    <p>
+                                        <a href="https://drive.specian.co.uk/apps/forms/5NTRiWTybZ3qWS43">Contact us</a>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <footer class="text-muted py-5">
+            <div class="container">
+                <p class="float-end mb-1">
+                    <a href="#">Back to top</a>
+                </p>
+                <p class="mb-1">
+                    Built with ❤️ by <a href="https://www.specian.co.uk/">Specian</a> in London. Looking for something
+                    else? Ask us on <a href="https://twitter.com/SpecianUk">Twitter</a>.
+                </p>
+            </div>
+        </footer>
+
+        <script
+            src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+            crossorigin="anonymous"
+        ></script>
+    </body>
+</html>
