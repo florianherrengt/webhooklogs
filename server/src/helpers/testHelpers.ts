@@ -1,4 +1,4 @@
-import { Application, User } from '../models';
+import { Application, HookEvent, User } from '../models';
 import faker from 'faker';
 
 export const createUser = (): Promise<User> => {
@@ -21,5 +21,19 @@ export const createApplication = ({
     return Application.create({
         name: faker.random.words(),
         userId,
+    });
+};
+
+export const createHookEvent = ({
+    applicationId,
+}: {
+    applicationId: string;
+}) => {
+    return HookEvent.create({
+        headers: {},
+        body: {},
+        method: 'get',
+        path: '/',
+        applicationId,
     });
 };

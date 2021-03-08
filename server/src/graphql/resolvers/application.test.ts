@@ -14,13 +14,11 @@ describe('resolvers/Applications', () => {
     let agent: supertest.SuperTest<supertest.Test>;
     beforeAll(async () => {
         app = (await createApp()).app;
-        // app.use('/api', graphqlRouter);
         agent = supertest(app);
     });
     beforeEach(() => {
         jest.resetAllMocks();
     });
-    afterAll(() => {});
     test('applicationById', async () => {
         const user = await User.create({
             username: 'username',

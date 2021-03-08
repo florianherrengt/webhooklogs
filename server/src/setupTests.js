@@ -11,6 +11,9 @@ process.env.DOMAIN = 'DOMAIN';
 process.env.REDIS_URL = 'redis://127.0.0.1';
 process.env.ADMIN_SECRET = 'ADMIN_SECRET';
 process.env.SERVE_STATIC_FILES = 'false';
+process.env.MATRIX_TOKEN = 'MATRIX_TOKEN';
+process.env.MATRIX_DOMAIN = 'MATRIX_DOMAIN';
+process.env.MATRIX_ROOM_ID = 'MATRIX_ROOM_ID';
 
 import 'reflect-metadata';
 import { sequelize } from './models';

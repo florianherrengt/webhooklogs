@@ -25,6 +25,7 @@ import {
     TargetResponseGraphqlAttributes,
 } from '../../models';
 import { NEW_HOOK_EVENT, UPDATE_HOOK_EVENT } from '../../pubSub';
+import { ApplicationResolver } from './application';
 import PaginatedResponse from './PaginatedResponse';
 import { WhereOps } from './WhereOps';
 
@@ -44,7 +45,7 @@ class HookEventWhere {
 class PaginationCursorFields {
     @Field(() => String, { nullable: true })
     after?: string;
-    @Field({ nullable: true, defaultValue: 20 })
+    @Field({ nullable: true, defaultValue: 100 })
     @Max(100)
     limit: number;
 }
@@ -66,6 +67,7 @@ class NewHookEventArgs {
 
 @Resolver()
 export class HookEventResolver {
+    applicationResolver = new ApplicationResolver();
     formatHookEvent(hookEvent: HookEvent): HookEventGraphqlAttributes {
         const targetResponse: TargetResponseGraphqlAttributes | null = hookEvent.targetResponse
             ? {
@@ -82,25 +84,55 @@ export class HookEventResolver {
         };
     }
     @Query(() => HookEvent)
-    async hookEventById(@Arg('id') id: string) {
+    async hookEventById(@Arg('id') id: string, @Ctx() context: GraphqlContext) {
+        if (!context.user?.id) {
+            return new UnauthorizedError();
+        }
         const hookEvent = await HookEvent.findByPk(id, {
             include: [{ model: TargetResponse as any, as: 'targetResponse' }],
         });
         if (!hookEvent) {
             return new Error(`HookEvent not found for id ${id}`);
         }
+        const application = await this.applicationResolver.applicationById(
+            hookEvent.applicationId,
+            context,
+        );
+        if (!application) {
+            return new Error(`no application not found for id ${hookEvent.id}`);
+        }
+        if (application instanceof Error) {
+            return application;
+        }
+        if (application.userId !== context.user.id) {
+            return new UnauthorizedError();
+        }
         return this.formatHookEvent(hookEvent);
     }
     @Query(() => PaginatedHookEventResponse)
     async hookEvents(
         @Args() { where }: HookEventWhere,
-        @Args() { cursor = { limit: 20 } }: PaginationCursor,
+        @Args() { cursor = { limit: 100 } }: PaginationCursor,
         @Ctx() context: GraphqlContext,
     ): Promise<PaginatedHookEventResponse | Error> {
-        const applications = await Application.findAll({
-            where: { userId: { eq: context.user?.id } },
-        });
-        const whereQuery = JSON.parse(JSON.stringify(where));
+        if (!context.user?.id) {
+            return new UnauthorizedError();
+        }
+        const application = await this.applicationResolver.applicationById(
+            where.applicationId.eq,
+            context,
+        );
+        if (!application) {
+            return new Error(
+                `no application not found for id ${where.applicationId.eq}`,
+            );
+        }
+        if (application instanceof Error) {
+            return application;
+        }
+        if (application.userId !== context.user.id) {
+            return new UnauthorizedError();
+        }
         const order: Order = [['createdAt', 'desc']];
         const limit = cursor.limit >= 100 ? 100 : cursor.limit;
 
@@ -113,12 +145,16 @@ export class HookEventResolver {
             );
         }
         const total = await HookEvent.count({
-            where: whereQuery,
+            where: {
+                applicationId: {
+                    [Op.eq]: where.applicationId.eq,
+                },
+            },
         });
         const items = await HookEvent.findAll({
             where: {
                 [Op.and]: [
-                    whereQuery,
+                    { applicationId: { [Op.eq]: where.applicationId.eq } },
                     cursorRow
                         ? {
                               id: { ne: cursorRow.id },
@@ -127,7 +163,6 @@ export class HookEventResolver {
                               },
                           }
                         : null,
-                    { applicationId: { in: applications.map(({ id }) => id) } },
                 ],
             },
             include: [{ model: TargetResponse as any, as: 'targetResponse' }],
@@ -146,6 +181,7 @@ export class HookEventResolver {
         const hasMore = await HookEvent.count({
             where: {
                 [Op.and]: [
+                    { applicationId: { [Op.eq]: where.applicationId.eq } },
                     {
                         createdAt: {
                             lt: items[items.length - 1].createdAt,
@@ -195,7 +231,7 @@ export class HookEventResolver {
         ) {
             return new UnauthorizedError();
         }
-        return this.hookEventById(hookEvent.id);
+        return this.hookEventById(hookEvent.id, context);
     }
     @Subscription(() => HookEvent, {
         topics: UPDATE_HOOK_EVENT,
