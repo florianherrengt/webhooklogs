@@ -1,0 +1,20 @@
+kind: pipeline
+type: docker
+name: default
+
+platform:
+    os: linux
+    arch: arm64
+
+steps:
+    - name: build
+      image: docker
+      commands:
+          - sleep 30
+          - apk add curl
+          - mkdir -p ~/.docker/cli-plugins
+          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64
+          - chmod +x ~/.docker/cli-plugins/docker-buildx
+          - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          - docker info
+          - docker buildx build -t dokku/webhooklogsapi .
