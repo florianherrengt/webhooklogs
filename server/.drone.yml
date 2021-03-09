@@ -13,7 +13,7 @@ steps:
           - sleep 30
           - apk add curl
           - mkdir -p ~/.docker/cli-plugins
-          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64
+          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
           - chmod +x ~/.docker/cli-plugins/docker-buildx
           - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
           - docker info
