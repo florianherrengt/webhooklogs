@@ -31,6 +31,10 @@ export const processHookEvent = async ({
     const [hookEvent, replayResponse] = await Promise.all([
         HookEvent.create({
             ...request,
+            body:
+                typeof request.body === 'string'
+                    ? { text: request.body }
+                    : request.body,
             path: request.path || '/',
             headers: request.headers,
             applicationId,

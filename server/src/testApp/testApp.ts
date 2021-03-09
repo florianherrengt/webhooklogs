@@ -3,7 +3,7 @@ import * as bodyParser from 'body-parser';
 
 const testApp = express();
 
-testApp.use(bodyParser.json(), (request, response) => {
+testApp.use(bodyParser.json(), bodyParser.urlencoded(), (request, response) => {
     const info = {
         date: new Date(),
         method: request.method,

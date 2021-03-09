@@ -4,6 +4,7 @@ import url from 'url';
 import express from 'express';
 import { Application, ApplicationAttributes } from '../models';
 import { omit } from 'lodash';
+import qs from 'qs';
 
 interface ReplayRequestParams {
     application: ApplicationAttributes;
@@ -54,6 +55,7 @@ export const replayRequest = ({
             responseStatus = res.statusCode;
             responseHeaders = res.headers;
             res.on('data', (chunck: string) => {
+                console.log(chunck);
                 data += chunck;
             });
         };
@@ -70,6 +72,7 @@ export const replayRequest = ({
             });
         });
         req.on('close', () => {
+            console.log(data);
             try {
                 data = JSON.parse(data);
             } catch (e) {}
@@ -80,6 +83,12 @@ export const replayRequest = ({
                 error: null,
             });
         });
-        req.write(typeof body === 'string' ? body : JSON.stringify(body));
+        if (headers['content-type'] === 'x-www-form-urlencoded') {
+            req.write(qs.stringify(body));
+        } else if (typeof body !== 'string') {
+            req.write(JSON.stringify(body));
+        } else {
+            req.write(body);
+        }
         req.end();
     });
