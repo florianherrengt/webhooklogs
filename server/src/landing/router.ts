@@ -8,3 +8,8 @@ landingRouter.get('/', (_, response) => {
         path.join(__dirname, '../../../../landing', 'index.html'),
     );
 });
+landingRouter.get('/privacy', (_, response) => {
+    response.sendFile(
+        path.join(__dirname, '../../../../landing', 'privacy.html'),
+    );
+});
