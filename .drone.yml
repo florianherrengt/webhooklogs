@@ -10,7 +10,7 @@ steps:
     - name: build
       image: docker
       commands:
-          - sleep 30
+          - sleep 31
           - apk add curl
           - mkdir -p ~/.docker/cli-plugins
           - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
