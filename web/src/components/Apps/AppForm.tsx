@@ -71,7 +71,7 @@ export const AppForm = (props: AppFormProps) => {
           </div>
           <div className="mb-3">
             <label htmlFor="targetUrl" className="form-label">
-              <b>Target</b>
+              <b>Target (optional)</b>
             </label>
             <div>
               <input

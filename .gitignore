@@ -9,3 +9,4 @@ deployment/config
 *.rdb
 **/*.rdb
 *.bin
+.DS_Store
