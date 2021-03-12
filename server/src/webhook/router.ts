@@ -4,7 +4,7 @@ import { cache } from '../cache';
 import { Application, HookEvent, TargetResponse } from '../models';
 import { processHookEvent } from './processHookEvent';
 import { replayRequest } from './replayRequest';
-import uuid from 'uuid';
+import * as uuid from 'uuid';
 
 export const webhookRouter = Router();
 
