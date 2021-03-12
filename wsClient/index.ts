@@ -1,17 +1,31 @@
-// Start the connection to the WebSocket server at echo.websocket.org
+import { parse } from "https://deno.land/std/flags/mod.ts";
+
+const args = parse(Deno.args);
+
+const applicationId = args["id"];
+const apiKey = args["api-key"];
+
+if (!applicationId) {
+    console.error("invalid --id params");
+    Deno.exit(1);
+}
+
+if (!apiKey) {
+    console.error("invalid --api-key params");
+    Deno.exit(1);
+}
+
+// const ws = new WebSocket("ws://localhost:3001/api/graphql", "graphql-ws");
 const ws = new WebSocket("wss://webhooklogs.com/api/graphql", "graphql-ws");
 
-// Register event listeners for the open, close, and message events
 ws.onopen = () => {
     console.log("Connected... waiting for requests");
 
-    // Send a message over the WebSocket to the server
     ws.send(
         JSON.stringify({
             type: "connection_init",
             payload: {
-                authorization:
-                    "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIzN2Y2NTY3ZC1kNjc4LTRmNzMtYWRkOC0yOTI0ZmIzMmY4NzAiLCJpYXQiOjE2MTUzMjMwNDIsImV4cCI6MTYxNzkxNTA0MiwiYXVkIjoid2ViIiwiaXNzIjoid2ViaG9va2xvZ3MuY29tIn0.Z18vrlwgP6IJfE5c1bZNom1eap4lNwM3enipxy8MxC8",
+                "x-api-key": apiKey,
             },
         })
     );
@@ -32,7 +46,7 @@ ws.onmessage = async (message) => {
                     id: "1",
                     type: "start",
                     payload: {
-                        variables: { applicationId: "f9fb2a33-a97c-43f2-9d89-446813652dfa" },
+                        variables: { applicationId },
                         extensions: {},
                         operationName: "newHookEvent",
                         query:

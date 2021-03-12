@@ -10,7 +10,6 @@ import {
 } from 'type-graphql';
 import { GraphqlContext } from '../../graphqlContext';
 import { UpdateUserInput, User } from '../../models/User';
-import { Stripe } from 'stripe';
 import { stripe } from '../../helpers/stripe';
 import { config } from '../../config';
 import { sequelize } from '../../models';
@@ -18,8 +17,13 @@ import { sequelize } from '../../models';
 @Resolver(() => User)
 export class UserResolver {
     @Query((returns) => User, { nullable: true })
-    me(@Ctx() context: GraphqlContext) {
-        return User.findByPk(context.user?.id);
+    async me(@Ctx() context: GraphqlContext) {
+        const user = await User.findByPk(context.user?.id);
+        if (!user) {
+            return null;
+        }
+        user.apiKey = Buffer.from(user.apiKey, 'utf-8').toString('base64');
+        return user;
     }
     @FieldResolver(() => String)
     async stripeCustomerPortalLink(@Root() user: User): Promise<string> {

@@ -6,11 +6,14 @@ import Umzug from 'umzug';
 import path from 'path';
 
 (async () => {
-    await sequelize.sync();
     const umzug = new Umzug({
         migrations: { path: path.join(__dirname, 'migrations/') },
+        storageOptions: {
+            columnName: 'migrations',
+        },
     });
     const migrations = await umzug.up();
+    await sequelize.sync();
     console.info({ migrations });
     const { app, apolloServer } = await createApp();
 
