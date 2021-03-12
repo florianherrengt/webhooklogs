@@ -17,7 +17,15 @@ steps:
     #       - yarn --cwd web build
     - name: backend
       image: node
+      volumes:
+          - name: cache
+            path: /tmp/cache
       commands:
           - npm i --prefix server
           - npm test --prefix server
           - npm run build --prefix server
+
+volumes:
+    - name: cache
+      host:
+          path: /var/lib/cache
