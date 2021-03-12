@@ -22,7 +22,7 @@ steps:
             path: /whl-be
       commands:
           - npm i --prefix server
-          - tsc -p server
+          - npm run build --prefix server
     - name: build
       image: docker:dind
       privileged: true
