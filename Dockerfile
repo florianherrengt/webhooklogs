@@ -10,6 +10,4 @@ RUN npm i --prefix server
 
 COPY . .
 
-RUN ./server/node_modules/.bin/tsc -p server --outDir server/.build
-
 CMD ["node", "server/.build/src/index.js"]
