@@ -19,16 +19,14 @@ steps:
       image: node
       volumes:
           - name: cache
-            path: /tmp/cache
+            path: /drone/src/server/node_modules
       commands:
-          - exit 1
-            # - npm i --prefix server
-            # - npm run build --prefix server
-            # - npm test --prefix server
-            # - npm run build --prefix server
+          - npm i --prefix server
+          - npm run build --prefix server
+          - npm test --prefix server
       environment:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432?sslmode=disable"
-          REDIS_URL: redis://127.0.0.1
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432?sslmode=disable"
+          TEST_REDIS_URL: redis://127.0.0.1
 
 volumes:
     - name: cache
