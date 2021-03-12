@@ -21,7 +21,7 @@ steps:
           - name: cache
             path: /tmp/cache
       commands:
-          - echo test
+          - exit 1
             # - npm i --prefix server
             # - npm run build --prefix server
             # - npm test --prefix server
