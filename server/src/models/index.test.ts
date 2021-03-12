@@ -3,10 +3,6 @@ import { Application, HookEvent, TargetResponse, User } from '.';
 import { sequelize } from './sequelize';
 
 describe('sequelize models', () => {
-    beforeAll(async () => {
-        await sequelize.sync();
-    });
-
     test('models are connected to each other', async () => {
         const user = await User.create({
             username: faker.internet.userName(),
