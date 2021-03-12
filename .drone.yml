@@ -4,7 +4,7 @@ name: default
 
 platform:
     os: linux
-    arch: arm64
+    arch: arm64z
 
 steps:
     - name: test
@@ -13,7 +13,13 @@ steps:
           - name: dockersock
             path: /var/run/
       commands:
-          - docker ps -a
+          - apk add curl
+          - mkdir -p ~/.docker/cli-plugins
+          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
+          - chmod +x ~/.docker/cli-plugins/docker-buildx
+          - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+          - docker info
+          - docker buildx build -t dokku/webhooklogsapi .
 
 volumes:
     - name: dockersock
