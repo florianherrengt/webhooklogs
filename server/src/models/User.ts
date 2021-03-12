@@ -9,10 +9,11 @@ export interface UserAttributes {
     email?: string;
     githubId?: string;
     stripeCustomerId: string;
+    apiKey: string;
 }
 
 export interface UserCreationAttributes
-    extends Omit<UserAttributes, 'id' | 'isSubscribed'> {}
+    extends Omit<UserAttributes, 'id' | 'isSubscribed' | 'apiKey'> {}
 
 @InputType()
 export class UpdateUserInput
@@ -43,6 +44,8 @@ export class User
     hasPaymentMethod: boolean;
     @Field()
     isSubscriptionValid: boolean;
+    @Field()
+    apiKey: string;
 }
 
 User.init(
@@ -67,6 +70,11 @@ User.init(
         stripeCustomerId: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        apiKey: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            defaultValue: () => uuid(),
         },
     },
     {

@@ -55,7 +55,6 @@ export const replayRequest = ({
             responseStatus = res.statusCode;
             responseHeaders = res.headers;
             res.on('data', (chunck: string) => {
-                console.log(chunck);
                 data += chunck;
             });
         };
@@ -72,7 +71,6 @@ export const replayRequest = ({
             });
         });
         req.on('close', () => {
-            console.log(data);
             try {
                 data = JSON.parse(data);
             } catch (e) {}

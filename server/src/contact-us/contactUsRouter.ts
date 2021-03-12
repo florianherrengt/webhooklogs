@@ -23,7 +23,6 @@ contactUsRouter.post(
     bodyParser.json(),
     bodyParser.urlencoded({ extended: true }),
     async (request, response) => {
-        console.log(request.body);
         const { email, message } = request.body;
         if (!email || !message) {
             return response.status(400).json({

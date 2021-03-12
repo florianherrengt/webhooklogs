@@ -37,8 +37,8 @@ volumes:
 
 services:
     - name: cache
-      image: redis
+      image: redis:5.0.7
     - name: database
-      image: postgres
+      image: postgres:11.6
       environment:
           POSTGRES_PASSWORD: postgres
