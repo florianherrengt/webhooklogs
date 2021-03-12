@@ -13,10 +13,6 @@ steps:
           - name: dockersock
             path: /var/run/
       commands:
-          - apk add curl
-          - mkdir -p ~/.docker/cli-plugins
-          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-amd64
-          - chmod +x ~/.docker/cli-plugins/docker-buildx
           - docker info
           - docker buildx build --platform linux/amd64 -t dokku/webhooklogsapi .
 
