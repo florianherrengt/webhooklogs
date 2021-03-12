@@ -10,7 +10,6 @@ import { anyRouter } from './any';
 import { configRouter } from './config';
 import { createGraphqlRouter } from './graphql';
 import { healhtzRouter } from './healthz';
-import { sequelize } from './models';
 import { passportRouter } from './passport/router';
 import { webhookRouter } from './webhook';
 import { landingRouter } from './landing';
@@ -19,11 +18,8 @@ import { contactUsRouter } from './contact-us';
 const createApp = async (): Promise<{
     app: express.Express;
     apolloServer: ApolloServer;
-    sequelize: Sequelize;
     schema: GraphQLSchema;
 }> => {
-    await sequelize.sync();
-
     const app = express();
     app.enable('trust proxy');
 
@@ -41,6 +37,6 @@ const createApp = async (): Promise<{
 
     app.use('/', landingRouter);
     app.use(anyRouter);
-    return { app, apolloServer, sequelize, schema };
+    return { app, apolloServer, schema };
 };
 export { createApp };

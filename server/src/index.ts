@@ -1,10 +1,11 @@
 import { createServer } from 'http';
 import { createApp } from './app';
 import { config } from './config';
+import { sequelize } from './models';
 
 (async () => {
-    const { app, apolloServer, sequelize } = await createApp();
-
+    await sequelize.sync();
+    const { app, apolloServer } = await createApp();
     const httpServer = createServer(app);
     apolloServer.installSubscriptionHandlers(httpServer);
     httpServer.listen(config.app.port, () => {

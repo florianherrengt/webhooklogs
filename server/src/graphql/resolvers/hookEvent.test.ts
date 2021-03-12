@@ -1,10 +1,8 @@
-import express, { Router } from 'express';
+import express from 'express';
 import supertest from 'supertest';
-import { Application, HookEvent, User } from '../../models';
+import { HookEvent } from '../../models';
 import { gql } from 'apollo-server-express';
 import { print } from 'graphql/language/printer';
-import { cache } from '../../cache';
-import { omit } from 'lodash';
 import { createApp } from '../../app';
 import { createJwt } from '../../helpers/createJwt';
 import * as testHelpers from '../../helpers/testHelpers';
