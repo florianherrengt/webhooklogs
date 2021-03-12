@@ -5,6 +5,10 @@ import { matrix } from '../helpers';
 
 const configRouter = Router();
 
+configRouter.get('/config/wsClient/version', (_, response) =>
+    response.json({ version: 1 }),
+);
+
 configRouter.get('/config', (request, response) => {
     if (request.headers['admin-secret'] !== config.app.admin.secret) {
         return response.status(401).json({
