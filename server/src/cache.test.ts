@@ -1,7 +1,6 @@
 import { cache } from './cache';
-import { Application, sequelize } from './models';
+import { Application } from './models';
 import * as testHelpers from './helpers/testHelpers';
-import { redisClient } from './redis';
 
 describe('cache', () => {
     test('application', async () => {

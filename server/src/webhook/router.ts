@@ -10,7 +10,7 @@ export const webhookRouter = Router();
 webhookRouter.use(
     '/webhook/:applicationId',
     bodyParser.json(),
-    bodyParser.urlencoded(),
+    bodyParser.urlencoded({ extended: true }),
     async (request, response) => {
         const {
             params: { applicationId },

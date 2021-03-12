@@ -21,6 +21,7 @@ steps:
           - name: cache
             path: /drone/src/server/node_modules
       commands:
+          - ls server
           - npm i --prefix server
           - npm run build --prefix server
           - npm test --prefix server
