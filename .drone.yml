@@ -21,12 +21,13 @@ steps:
           - name: cache
             path: /tmp/cache
       commands:
-          - npm i --prefix server
-          - npm run build --prefix server
-          - npm test --prefix server
-          - npm run build --prefix server
+          - echo test
+            # - npm i --prefix server
+            # - npm run build --prefix server
+            # - npm test --prefix server
+            # - npm run build --prefix server
       environment:
-          DATABASE_URL: postgresql://postgres@localhost:5432?sslmode=disable"
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432?sslmode=disable"
           REDIS_URL: redis://127.0.0.1
 
 volumes:
@@ -39,3 +40,5 @@ services:
       image: redis
     - name: database
       image: postgres
+      environment:
+          POSTGRES_PASSWORD: postgres
