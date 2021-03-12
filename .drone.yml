@@ -21,7 +21,7 @@ steps:
           - name: cache
             path: /whl-be
       commands:
-          - npm --prefix i
+          - npm i --prefix server
           - tsc -p server
     - name: build
       image: docker:dind
