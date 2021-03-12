@@ -4,6 +4,7 @@ import { cache } from '../cache';
 import { Application, HookEvent, TargetResponse } from '../models';
 import { processHookEvent } from './processHookEvent';
 import { replayRequest } from './replayRequest';
+import uuid from 'uuid';
 
 export const webhookRouter = Router();
 
@@ -16,6 +17,11 @@ webhookRouter.use(
             params: { applicationId },
         } = request;
 
+        if (!uuid.validate(request.params.applicationId)) {
+            return response
+                .status(400)
+                .json({ error: 'invalid application id' });
+        }
         const { hookEvent, replayResponse } = await processHookEvent({
             request,
             applicationId,

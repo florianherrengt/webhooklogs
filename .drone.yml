@@ -18,7 +18,7 @@ steps:
     - name: backend
       image: node
       volumes:
-          - name: cache
+          - name: server-node_modules-cache
             path: /drone/src/server/node_modules
       commands:
           - ls server
@@ -26,13 +26,14 @@ steps:
           - npm run build --prefix server
           - npm test --prefix server
       environment:
-          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432?sslmode=disable"
+          TEST_DATABASE_URL: postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
           TEST_REDIS_URL: redis://127.0.0.1
+          CI: "true"
 
 volumes:
-    - name: cache
+    - name: server-node_modules-cache
       host:
-          path: /var/lib/cache
+          path: /var/lib/cache/webooklogs/server/node_modules
 
 services:
     - name: cache

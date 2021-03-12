@@ -15,7 +15,9 @@ testApp.use(
             url: request.originalUrl,
             body: request.body,
         };
-        console.info('request...', new Date(), info);
+        if (process.env.CI !== 'true') {
+            console.info('request...', new Date(), info);
+        }
         response.status(info.status).json({ ok: 1, ...info });
     },
 );

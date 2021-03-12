@@ -40,9 +40,9 @@ describe('app', () => {
         expect(jwtMiddleware).toHaveBeenCalled();
     });
     test('/webhook', async () => {
-        const { body } = await agent.get('/api/webhook/app123').expect(404);
+        const { body } = await agent.get('/api/webhook/app123').expect(400);
         expect(body).toEqual({
-            error: 'no application with id: app123 found.',
+            error: 'invalid application id',
         });
         expect(jwtMiddleware).not.toHaveBeenCalled();
     });
