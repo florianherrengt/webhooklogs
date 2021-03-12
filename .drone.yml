@@ -7,22 +7,22 @@ platform:
     arch: arm64z
 
 steps:
-    - name: frontend
-      image: node
-      volumes:
-          - name: cache
-            path: /whl-fe
-      commands:
-          - yarn --cwd web --network-timeout 100000
-          - yarn --cwd web build
-    - name: backend
-      image: node
-      volumes:
-          - name: cache
-            path: /whl-be
-      commands:
-          - npm i --prefix server
-          - npm run build --prefix server
+    # - name: frontend
+    #   image: node
+    #   volumes:
+    #       - name: cache
+    #         path: /whl-fe
+    #   commands:
+    #       - yarn --cwd web --network-timeout 100000
+    #       - yarn --cwd web build
+    # - name: backend
+    #   image: node
+    #   volumes:
+    #       - name: cache
+    #         path: /whl-be
+    #   commands:
+    #       - npm i --prefix server
+    #       - npm run build --prefix server
     - name: build
       image: docker:dind
       privileged: true
