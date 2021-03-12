@@ -13,16 +13,16 @@ steps:
           - name: cache
             path: /whl-fe
       commands:
-          - yarn
-          - yarn build
+          - yarn --cwd web
+          - yarn --cwd web build
     - name: backend
       image: node
       volumes:
           - name: cache
             path: /whl-be
       commands:
-          - npm i
-          - tsc
+          - npm --prefix i
+          - tsc -p server
     - name: build
       image: docker:dind
       privileged: true
