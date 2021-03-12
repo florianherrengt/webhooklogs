@@ -15,37 +15,9 @@ steps:
     #   commands:
     #       - yarn --cwd web --network-timeout 100000
     #       - yarn --cwd web build
-    # - name: backend
-    #   image: node
-    #   volumes:
-    #       - name: cache
-    #         path: /whl-be
-    #   commands:
-    #       - npm i --prefix server
-    #       - npm run build --prefix server
-    - name: build
-      image: docker:dind
-      privileged: true
-      volumes:
-          - name: dockersock
-            path: /var/run/
-          - name: cache
-            path: /whl
+    - name: backend
+      image: node
       commands:
-          - apk add curl
-          - mkdir -p ~/.docker/cli-plugins
-          - curl -sSLo ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.5.1/buildx-v0.5.1.linux-arm64
-          - chmod +x ~/.docker/cli-plugins/docker-buildx
-          - docker info
-          # - docker buildx create --use node-amd64
-          - docker buildx build --platform linux/amd64 -t dokku/webhooklogsapi .
-      # depends_on:
-      #     - backend
-
-volumes:
-    - name: dockersock
-      host:
-          path: /var/run/
-    - name: cache
-      temp:
-          medium: memory
+          - npm i --prefix server
+          - npm test --prefix server
+          - npm run build --prefix server
