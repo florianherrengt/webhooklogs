@@ -1,4 +1,3 @@
-import { ApolloServerExpressConfig, ApolloServer } from 'apollo-server-express';
 import { ExecutionParams } from 'subscriptions-transport-ws';
 import { verifyJwt } from './helpers/createJwt';
 
