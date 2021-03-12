@@ -25,8 +25,17 @@ steps:
           - npm run build --prefix server
           - npm test --prefix server
           - npm run build --prefix server
+      environment:
+          DATABASE_URL: postgresql://postgres@localhost:5432?sslmode=disable"
+          REDIS_URL: redis://127.0.0.1
 
 volumes:
     - name: cache
       host:
           path: /var/lib/cache
+
+services:
+    - name: cache
+      image: redis
+    - name: database
+      image: postgres
