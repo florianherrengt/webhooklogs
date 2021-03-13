@@ -1,7 +1,7 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { Button } from '../Button';
-import { Application } from '../../helpers';
+import { Application, User } from '../../helpers';
 import { config } from '../../config';
 
 interface FormData {
@@ -10,7 +10,8 @@ interface FormData {
 }
 
 interface AppFormProps {
-  application?: Omit<Application, '__typename' | 'hookEvents'>;
+  application?: Pick<Application, 'id' | 'name' | 'targetUrl'>;
+  user?: Pick<User, 'apiKey'>;
   loading?: boolean;
   onSubmit: (data: FormData) => void;
   onDelete?: () => void;
@@ -48,6 +49,29 @@ export const AppForm = (props: AppFormProps) => {
                 <b>Endpoint</b>
               </label>
               <div id="endpoint">{appWebhookUrl}</div>
+            </div>
+          ) : null}
+
+          {props.application ? (
+            <div className="mb-3">
+              <label htmlFor="download-btn" className="form-label">
+                <b>Replay requests on localhost</b>
+              </label>
+              <div>
+                <p>Download the client and replay your request to localhost.</p>
+                <p className="font-monospace">
+                  ./wsClient --id {props.application.id} --api-key{' '}
+                  {props.user?.apiKey} --target http://localhost:3002
+                </p>
+              </div>
+              <div>
+                <Button
+                  link="https://minio.specian.co.uk/webhooklogs-ws-client/wsClient"
+                  id="download-btn"
+                  text="Download"
+                  external
+                ></Button>
+              </div>
             </div>
           ) : null}
           <div className="mb-3">

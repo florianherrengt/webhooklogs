@@ -3,6 +3,7 @@ fragment UserFields on User {
   username
   email
   githubId
+  apiKey
 }
 
 fragment UserPaymentDetailsFields on User {

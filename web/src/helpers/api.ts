@@ -54,6 +54,7 @@ export type User = {
   stripeCustomerId: Scalars['String'];
   hasPaymentMethod: Scalars['Boolean'];
   isSubscriptionValid: Scalars['Boolean'];
+  apiKey: Scalars['String'];
 };
 
 export type Application = {
@@ -62,6 +63,8 @@ export type Application = {
   name: Scalars['String'];
   targetUrl?: Maybe<Scalars['String']>;
   userId: Scalars['String'];
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type HookEvent = {
@@ -110,8 +113,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   updateAccountSettings: User;
   createApplication: Application;
-  deleteApplicationById: Scalars['Int'];
   updateApplicationById: Application;
+  deleteApplicationById: Scalars['Int'];
 };
 
 
@@ -125,13 +128,13 @@ export type MutationCreateApplicationArgs = {
 };
 
 
-export type MutationDeleteApplicationByIdArgs = {
-  id: Scalars['String'];
+export type MutationUpdateApplicationByIdArgs = {
+  input: UpdateApplicationInput;
 };
 
 
-export type MutationUpdateApplicationByIdArgs = {
-  input: UpdateApplicationInput;
+export type MutationDeleteApplicationByIdArgs = {
+  id: Scalars['String'];
 };
 
 export type UpdateUserInput = {
@@ -286,7 +289,7 @@ export type UpdateHookEventSubscription = (
 
 export type UserFieldsFragment = (
   { __typename?: 'User' }
-  & Pick<User, 'id' | 'username' | 'email' | 'githubId'>
+  & Pick<User, 'id' | 'username' | 'email' | 'githubId' | 'apiKey'>
 );
 
 export type UserPaymentDetailsFieldsFragment = (
@@ -384,6 +387,7 @@ export const UserFieldsFragmentDoc = gql`
   username
   email
   githubId
+  apiKey
 }
     `;
 export const UserPaymentDetailsFieldsFragmentDoc = gql`

@@ -10,3 +10,4 @@ deployment/config
 **/*.rdb
 *.bin
 .DS_Store
+wsClient/wsClient

@@ -4,6 +4,7 @@ const args = parse(Deno.args);
 
 const applicationId = args["id"];
 const apiKey = args["api-key"];
+const target = args["target"];
 
 if (!applicationId) {
     console.error("invalid --id params");
@@ -15,10 +16,21 @@ if (!apiKey) {
     Deno.exit(1);
 }
 
+if (!target) {
+    console.error("invalid --target params");
+    Deno.exit(1);
+}
+
 const start = async () => {
-    const isSecure = false;
-    // const baseUrl = "webhooklogs.com";
-    const baseUrl = "localhost:3001";
+    try {
+        await fetch(target, { method: "HEAD" });
+    } catch (error) {
+        console.error("cannot reach target", error.message);
+        Deno.exit(1);
+    }
+    const isSecure = true;
+    const baseUrl = "webhooklogs.com";
+    // const baseUrl = "localhost:3001";
 
     const { version } = await (
         await fetch(`http${isSecure ? "s" : ""}://${baseUrl}/api/config/wsClient/version`)

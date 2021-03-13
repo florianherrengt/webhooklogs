@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory, useParams } from 'react-router-dom';
+import { useAuth } from '../../AppRouter';
 import { AppForm } from '../../components';
-import { config } from '../../config';
 import { NavbarContainer } from '../../containers';
 import {
   useApplicationByIdQuery,
@@ -16,6 +16,7 @@ interface AppSettingsPageProps {}
 export const AppSettingsPage: React.FunctionComponent<AppSettingsPageProps> = (
   props,
 ) => {
+  const auth = useAuth();
   const history = useHistory();
   const { id: appId } = useParams<{ id: string }>();
   const applicationByIdResults = useApplicationByIdQuery({
@@ -72,6 +73,7 @@ export const AppSettingsPage: React.FunctionComponent<AppSettingsPageProps> = (
           </div>
         </nav>
         <AppForm
+          user={auth.user!}
           application={applicationByIdResults.data?.applicationById}
           loading={loading}
           onSubmit={async (input) => {
