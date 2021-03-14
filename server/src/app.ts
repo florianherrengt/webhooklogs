@@ -5,7 +5,7 @@ import * as bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { GraphQLSchema } from 'graphql';
-import { Sequelize } from 'sequelize/types';
+import { Sequelize } from 'sequelize';
 import { anyRouter } from './any';
 import { configRouter } from './config';
 import { createGraphqlRouter } from './graphql';
@@ -14,6 +14,8 @@ import { passportRouter } from './passport/router';
 import { webhookRouter } from './webhook';
 import { landingRouter } from './landing';
 import { contactUsRouter } from './contact-us';
+import { HookEvent, sequelize } from './models';
+import { Op } from 'sequelize';
 
 const createApp = async (): Promise<{
     app: express.Express;

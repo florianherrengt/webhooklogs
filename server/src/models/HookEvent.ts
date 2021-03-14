@@ -94,6 +94,12 @@ HookEvent.init(
     },
     {
         tableName: 'hook_events',
+        indexes: [
+            {
+                fields: ['application_id'],
+                concurrently: true,
+            },
+        ],
         underscored: true,
         sequelize,
     },

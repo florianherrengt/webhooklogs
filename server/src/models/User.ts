@@ -53,6 +53,7 @@ User.init(
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
+            unique: true,
             defaultValue: () => uuid(),
         },
         username: {

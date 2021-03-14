@@ -2,19 +2,9 @@ import { createServer } from 'http';
 import { createApp } from './app';
 import { config } from './config';
 import { sequelize } from './models';
-import Umzug from 'umzug';
-import path from 'path';
 
 (async () => {
-    const umzug = new Umzug({
-        migrations: { path: path.join(__dirname, 'migrations/') },
-        storageOptions: {
-            columnName: 'migrations',
-        },
-    });
-    const migrations = await umzug.up();
-    await sequelize.sync();
-    console.info({ migrations });
+    await sequelize.sync({ alter: true });
     const { app, apolloServer } = await createApp();
 
     const httpServer = createServer(app);

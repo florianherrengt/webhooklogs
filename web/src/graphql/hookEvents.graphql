@@ -18,8 +18,9 @@ fragment HookEventsFragment on HookEvent {
 query hookEvents(
   $where: HookEventWhereFields!
   $cursor: PaginationCursorFields
+  $searchTerms: String
 ) {
-  hookEvents(where: $where, cursor: $cursor) {
+  hookEvents(where: $where, cursor: $cursor, searchTerms: $searchTerms) {
     items {
       ...HookEventsFragment
     }

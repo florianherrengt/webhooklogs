@@ -57,6 +57,7 @@ Application.init(
         id: {
             type: DataTypes.UUID,
             primaryKey: true,
+            unique: true,
             defaultValue: () => uuid(),
         },
         name: {
@@ -77,6 +78,11 @@ Application.init(
     },
     {
         tableName: 'applications',
+        // indexes: [
+        //     {
+        //         fields: ['user_id'],
+        //     },
+        // ],
         underscored: true,
         sequelize,
     },

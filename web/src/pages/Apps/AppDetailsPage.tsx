@@ -133,6 +133,14 @@ export const AppDetailsPage: React.FunctionComponent<AppDetailsPageProps> = (
         <HookEventsList
           application={applicationByIdResults.data?.applicationById}
           hookEvents={hookEvents}
+          onSearchChange={(searchTerms) => {
+            setSelectedHookEvent(undefined);
+            hookEventsResults.refetch({
+              where: { applicationId: { eq: applicationId } },
+              cursor: { limit: 100 },
+              searchTerms,
+            });
+          }}
           selectedHookEvent={selectedHookEvent}
           onRowClick={(clickHookevent) =>
             setSelectedHookEvent(

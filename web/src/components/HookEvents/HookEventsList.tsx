@@ -5,6 +5,7 @@ import { Application, HookEventsFragmentFragment } from '../../helpers';
 import { Button } from '..';
 import { HookEventDetails } from './HookEventDetails';
 import { config } from '../../config';
+import { useDebounce } from 'react-use';
 
 interface HookEventsListProps {
   application?: Pick<Application, 'id' | 'targetUrl'>;
@@ -13,14 +14,29 @@ interface HookEventsListProps {
   onRowClick?: (hookEvent: HookEventsFragmentFragment) => void;
   hasMore?: boolean;
   onLoadMore?: () => void;
+  onSearchChange?: (searchTerms: string) => void;
 }
 
 export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
   props,
 ) => {
+  const [hasLoaded, setHasLoaded] = React.useState(false);
+  const [searchTerms, setSearchTerms] = React.useState('');
+  useDebounce(
+    () => {
+      props.onSearchChange && props.onSearchChange(searchTerms);
+    },
+    200,
+    [searchTerms],
+  );
   const { hookEvents = [] } = props;
+  React.useEffect(() => {
+    if (hookEvents.length) {
+      setHasLoaded(true);
+    }
+  }, [hookEvents]);
   const appWebhookUrl = `${config.api.protocol}://${config.api.url}/webhook/${props.application?.id}`;
-  if (!hookEvents.length) {
+  if (!hookEvents.length && !searchTerms && !hasLoaded) {
     return (
       <div>
         <p>
@@ -39,6 +55,19 @@ export const HookEventsList: React.FunctionComponent<HookEventsListProps> = (
   }
   return (
     <div>
+      <div className="border-bottom pb-3 mb-3">
+        <input
+          type="text"
+          className="form-control"
+          id="search"
+          name="search"
+          placeholder="Search... (e.g 'post hello')"
+          autoComplete="off"
+          value={searchTerms}
+          onChange={({ currentTarget }) => setSearchTerms(currentTarget.value)}
+          required
+        />
+      </div>
       <ul className="list-group list-group-flush font-monospace mb-4">
         {hookEvents.map((hookEvent, index) => {
           const createdAt = new Date(parseInt(hookEvent.createdAt, 10));

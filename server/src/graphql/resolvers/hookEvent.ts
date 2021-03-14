@@ -1,5 +1,5 @@
 import { Max } from 'class-validator';
-import { Op, Order } from 'sequelize';
+import { Op, Order, Sequelize } from 'sequelize';
 import {
     Arg,
     Args,
@@ -39,6 +39,8 @@ class HookEventWhereFields {
 class HookEventWhere {
     @Field(() => HookEventWhereFields)
     where: HookEventWhereFields;
+    @Field(() => String, { nullable: true })
+    searchTerms?: string;
 }
 
 @InputType()
@@ -111,7 +113,7 @@ export class HookEventResolver {
     }
     @Query(() => PaginatedHookEventResponse)
     async hookEvents(
-        @Args() { where }: HookEventWhere,
+        @Args() { where, searchTerms }: HookEventWhere,
         @Args() { cursor = { limit: 100 } }: PaginationCursor,
         @Ctx() context: GraphqlContext,
     ): Promise<PaginatedHookEventResponse | Error> {
@@ -122,6 +124,7 @@ export class HookEventResolver {
             where.applicationId.eq,
             context,
         );
+
         if (!application) {
             return new Error(
                 `no application not found for id ${where.applicationId.eq}`,
@@ -144,17 +147,59 @@ export class HookEventResolver {
                 `Could not find hook event with id ${cursor.after}`,
             );
         }
+
+        const opLikeList = (searchTerms || '').split(' ').map((term) => ({
+            [Op.like]: `%${term}%`,
+        }));
+
+        const searchTermsWhere = searchTerms
+            ? {
+                  [Op.or]: {
+                      method: {
+                          [Op.in]: searchTerms
+                              .split(' ')
+                              .map((t) => t.toUpperCase()),
+                      },
+                      headers: Sequelize.where(
+                          Sequelize.cast(
+                              Sequelize.col('HookEvent.headers'),
+                              'varchar',
+                          ),
+                          {
+                              [Op.or]: opLikeList,
+                          },
+                      ),
+                      path: {
+                          [Op.or]: opLikeList,
+                      },
+                      body: Sequelize.where(
+                          Sequelize.cast(Sequelize.col('body'), 'varchar'),
+                          {
+                              [Op.or]: opLikeList,
+                          },
+                      ),
+                  },
+              }
+            : null;
+
         const total = await HookEvent.count({
             where: {
-                applicationId: {
-                    [Op.eq]: where.applicationId.eq,
-                },
+                [Op.and]: [
+                    {
+                        applicationId: {
+                            [Op.eq]: where.applicationId.eq,
+                        },
+                    },
+                    searchTermsWhere,
+                ],
             },
         });
+
         const items = await HookEvent.findAll({
             where: {
                 [Op.and]: [
                     { applicationId: { [Op.eq]: where.applicationId.eq } },
+                    searchTermsWhere,
                     cursorRow
                         ? {
                               id: { ne: cursorRow.id },
@@ -182,6 +227,7 @@ export class HookEventResolver {
             where: {
                 [Op.and]: [
                     { applicationId: { [Op.eq]: where.applicationId.eq } },
+                    searchTermsWhere,
                     {
                         createdAt: {
                             lt: items[items.length - 1].createdAt,

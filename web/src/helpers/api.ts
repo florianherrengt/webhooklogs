@@ -37,6 +37,7 @@ export type QueryHookEventByIdArgs = {
 export type QueryHookEventsArgs = {
   cursor?: Maybe<PaginationCursorFields>;
   where: HookEventWhereFields;
+  searchTerms?: Maybe<Scalars['String']>;
 };
 
 export type Healthz = {
@@ -246,6 +247,7 @@ export type HookEventsFragmentFragment = (
 export type HookEventsQueryVariables = Exact<{
   where: HookEventWhereFields;
   cursor?: Maybe<PaginationCursorFields>;
+  searchTerms?: Maybe<Scalars['String']>;
 }>;
 
 
@@ -556,8 +558,8 @@ export type DeleteApplicationByIdMutationHookResult = ReturnType<typeof useDelet
 export type DeleteApplicationByIdMutationResult = Apollo.MutationResult<DeleteApplicationByIdMutation>;
 export type DeleteApplicationByIdMutationOptions = Apollo.BaseMutationOptions<DeleteApplicationByIdMutation, DeleteApplicationByIdMutationVariables>;
 export const HookEventsDocument = gql`
-    query hookEvents($where: HookEventWhereFields!, $cursor: PaginationCursorFields) {
-  hookEvents(where: $where, cursor: $cursor) {
+    query hookEvents($where: HookEventWhereFields!, $cursor: PaginationCursorFields, $searchTerms: String) {
+  hookEvents(where: $where, cursor: $cursor, searchTerms: $searchTerms) {
     items {
       ...HookEventsFragment
     }
@@ -581,6 +583,7 @@ export const HookEventsDocument = gql`
  *   variables: {
  *      where: // value for 'where'
  *      cursor: // value for 'cursor'
+ *      searchTerms: // value for 'searchTerms'
  *   },
  * });
  */
